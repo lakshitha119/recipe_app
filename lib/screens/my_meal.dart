@@ -7,17 +7,18 @@ import 'package:recipe_app/components/recipe_card.dart';
 import 'package:recipe_app/screens/recipe_view.dart';
 
 import '../components/circle_loader.dart';
+import '../components/meal_card.dart';
 
 
-class MyRecipe extends StatefulWidget {
+class MyMeal extends StatefulWidget {
 
-  const MyRecipe({Key? key}) : super(key: key);
+  const MyMeal({Key? key}) : super(key: key);
 
   @override
-  _MyRecipeState createState() => _MyRecipeState();
+  _MyMealState createState() => _MyMealState();
 }
 
-class _MyRecipeState extends State<MyRecipe> {
+class _MyMealState extends State<MyMeal> {
   List<dynamic> data = []; //ApiPass Body Data Holder
   String SelectedValueHolder = ""; //Dropdown Button Selected Value Holder
 
@@ -51,7 +52,7 @@ class _MyRecipeState extends State<MyRecipe> {
               width: 1,
             ),
             Text(
-              "My Recipe",
+              "My Meal",
               style: TextStyle(
                 fontFamily: "Roboto",
                 letterSpacing: 1.0,
@@ -68,11 +69,11 @@ class _MyRecipeState extends State<MyRecipe> {
       physics: const AlwaysScrollableScrollPhysics(),
     child: Column(children: [
 
-      RecipeCard(title: "Dhal Curry",desc: " ",onClick: (){
-          Navigator.of(context)
-              .push(MaterialPageRoute(builder: (context) => const ViewRecipe(title: "Hello",)));
-        },),
-      RecipeCard(title: "Fish Curry",desc: " ",),
+      MealCard(title: "Date - 2023-12-12",desc: "Meal Type - Lunch",onClick: (){
+        Navigator.of(context)
+            .push(MaterialPageRoute(builder: (context) => const ViewRecipe(title: "Hello",)));
+      },),
+      MealCard(title: "Date - 2023-12-14",desc: "Meal Type - Lunch",),
 
       ],)),
     );

@@ -195,7 +195,7 @@ class _BuildMealState extends State<BuildMeal> {
                   //SizedBox(height: 10.0,),
                   Padding(
                       padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
-                      child: DropdownWidget()),
+                      child: DropdownWidget(title: "Meal Type",items: ["Op1","Op2","Op3","Op4"],selected: "Op1",)),
                   const SizedBox(
                     height: 10.0,
                   ),
@@ -206,14 +206,13 @@ class _BuildMealState extends State<BuildMeal> {
                   ),
 
                   TextField(
-                    enabled: false,
                     maxLines: null, // Set maxLines to null for multiline input
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),
                     ),
                   ),
                   Container(
-                    width: MediaQuery.of(context).size.width / 100 * 100,
+                    width: MediaQuery.of(context).size.width / 100 * 20,
                     decoration: BoxDecoration(
                       gradient: const LinearGradient(
                         colors: [blue, Color.fromARGB(255, 4, 34, 193)],
@@ -226,16 +225,26 @@ class _BuildMealState extends State<BuildMeal> {
                       onPressed: () {},
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.transparent, elevation: 0),
-                      child: const Text(
-                        'Add Recipe',
-                        style: TextStyle(
-                          fontFamily: "Roboto",
-                          fontSize: 18.0,
-                          color: Colors.white,
-                          letterSpacing: 1.0,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      child: const Icon(
+                        Icons.search,
+                        size: 24.0,
+                        color: Colors.white
                       ),
+                    ),
+                  ),
+
+
+
+                  Text(
+                    'Selected Recipes',
+                    style: TextStyle(fontSize: 16),
+                  ),
+
+                  TextField(
+                    enabled: false,
+                    maxLines: null, // Set maxLines to null for multiline input
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
                     ),
                   ),
 

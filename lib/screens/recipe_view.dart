@@ -3,7 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:recipe_app/components/home_case_card_ca.dart';
+import 'package:recipe_app/components/recipe_card.dart';
 import 'package:recipe_app/utils/constant.dart';
 
 import '../components/circle_loader.dart';

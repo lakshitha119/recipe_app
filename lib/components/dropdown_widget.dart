@@ -3,12 +3,19 @@ import 'package:flutter/material.dart';
 import 'package:recipe_app/utils/constant.dart';
 
 class DropdownWidget extends StatefulWidget {
+
+  final String title;
+  final String selected;
+  final List<String> items;
+
+  DropdownWidget({required this.title, required this.items, required this.selected});
+
   @override
   _DropdownWidgetState createState() => _DropdownWidgetState();
 }
 
 class _DropdownWidgetState extends State<DropdownWidget> {
-  String selectedValue = 'Option 1';
+  String selectedValue = "";
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +24,7 @@ class _DropdownWidgetState extends State<DropdownWidget> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Meal Type: $selectedValue',
+          widget.title,
           style: TextStyle(fontSize: 16),
         ),
         SizedBox(height: 5),
@@ -32,13 +39,13 @@ class _DropdownWidgetState extends State<DropdownWidget> {
                     bottomRight: Radius.circular(6),
                     bottomLeft: Radius.circular(6))),
             child: DropdownButton<String>(
-              value: selectedValue,
+              value: widget.selected,
               onChanged: (String? newValue) {
                 setState(() {
                   selectedValue = newValue!;
                 });
               },
-              items: <String>['Option 1', 'Option 2', 'Option 3', 'Option 4']
+              items: widget.items
                   .map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
