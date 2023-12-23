@@ -195,7 +195,7 @@ class _HomeState extends State<Home> {
                 ),
               ),
               const SizedBox(
-                height: 15,
+                height: 10,
               ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
@@ -216,15 +216,11 @@ class _HomeState extends State<Home> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
                       //First Selection
-                      //Spacer
 
                       const Text("Select Date Range"),
                       const SizedBox(
-                        height: 5,
+                        height: 5.0,
                       ),
-                      const SizedBox(
-                        height: 10.0,
-                      ), //Spacer
                       Padding(
                         padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
                         child: Row(
@@ -404,7 +400,7 @@ class _HomeState extends State<Home> {
               Column(
                 children: <Widget>[
                   const SizedBox(
-                    height: 28,
+                    height: 10,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -451,7 +447,7 @@ class _HomeState extends State<Home> {
                     height: 1,
                   ),
                   AspectRatio(
-                    aspectRatio: 2,
+                    aspectRatio: 2.2,
                     child: PieChart(
                       PieChartData(
                         pieTouchData: PieTouchData(

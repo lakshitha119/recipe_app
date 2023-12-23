@@ -4,10 +4,13 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:recipe_app/data/food_data.dart';
 import 'package:recipe_app/services/state_servies.dart';
 
 import '../components/circle_loader.dart';
 import '../components/dropdown_widget.dart';
+import '../services/api.dart';
+import '../utils/constant.dart';
 
 class RecipeAdd extends StatefulWidget {
   const RecipeAdd({Key? key}) : super(key: key);
@@ -20,6 +23,7 @@ class _RecipeAddState extends State<RecipeAdd> {
   List<dynamic> data = []; //ApiPass Body Data Holder
   String SelectedValueHolder = ""; //Dropdown Button Selected Value Holder
   String selectedValue = ""; //Dropdown Button Selected Value Holder
+  int selectedId = 0; //Dropdown Button Selected Value Holder
 
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -28,6 +32,8 @@ class _RecipeAddState extends State<RecipeAdd> {
   final _formKey = GlobalKey<FormState>();
   TextEditingController _textEditingController = TextEditingController();
   TextEditingController _textEditingController1 = TextEditingController();
+  List<FoodData> allFilterList = [];
+
   @override
   void initState() {
     super.initState();
@@ -42,6 +48,31 @@ class _RecipeAddState extends State<RecipeAdd> {
     // });
     _textEditingController.text = "250 gram beans \n1 tablespoon oilve oil";
     _textEditingController1.text = "1";
+  }
+
+  Future<List<FoodData>> fetchSuggestions(String query) async {
+    allFilterList = [];
+    print("value1");
+    final value = await APIManager().getRequest(
+        Constant.domain + "/api/v1/Food?name=${query}&pageNo=1&pageSize=10");
+
+    print("value2");
+    print(value);
+    if(value!=null && value['results']!=null){
+      if (value['results'] != 0) {
+        for (var item in value['results']) {
+          allFilterList.add(FoodData(
+              fdcId: item['fdcId'] as int,
+              name: item['name'] as String,
+              category: item['category']));
+        }
+        return allFilterList;
+      } else {
+        return allFilterList;
+      }
+
+    }
+    return allFilterList;
   }
 
   @override
@@ -70,6 +101,7 @@ class _RecipeAddState extends State<RecipeAdd> {
         backgroundColor: Color.fromARGB(255, 0, 23, 147),
       ),
       body: SingleChildScrollView(
+        
         physics: const AlwaysScrollableScrollPhysics(),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -135,10 +167,11 @@ class _RecipeAddState extends State<RecipeAdd> {
                                           children: <Widget>[
                                             Padding(
                                               padding: const EdgeInsets.all(5),
-                                              child: TypeAheadField<String>(
+                                              child: TypeAheadField<FoodData>(
                                                 suggestionsCallback: (value) {
-                                                  return StateService
-                                                      .getSuggestions(value);
+                                                  print(value);
+                                                  return fetchSuggestions(
+                                                      value);
                                                 },
                                                 builder: (context, controller,
                                                     focusNode) {
@@ -146,29 +179,31 @@ class _RecipeAddState extends State<RecipeAdd> {
                                                       controller: controller,
                                                       focusNode: focusNode,
                                                       autofocus: true,
-                                                      decoration: InputDecoration(
+                                                      decoration: const InputDecoration(
                                                           border:
                                                               OutlineInputBorder(),
                                                           labelText:
                                                               'Search For Ingredient'));
                                                 },
-                                                itemBuilder: (context, city) {
+                                                itemBuilder:
+                                                    (context, foodData) {
                                                   return ListTile(
-                                                    title: Text(city),
+                                                    title: Text(foodData.name),
                                                   );
                                                 },
                                                 onSelected: (city) {
-
                                                   setState(() {
-                                                    selectedValue = city;
+                                                    selectedValue = city.name;
+                                                    selectedId = city.fdcId;
                                                   });
                                                 },
                                               ),
                                             ),
                                             Text(selectedValue),
-                                            Padding(
-                                              padding: const EdgeInsets.all(5),
+                                            const Padding(
+                                              padding: EdgeInsets.all(5),
                                               child: TextField(
+                                                  keyboardType: TextInputType.number,
                                                   autofocus: true,
                                                   decoration: InputDecoration(
                                                       border:
@@ -189,7 +224,7 @@ class _RecipeAddState extends State<RecipeAdd> {
                                                   selected: "Op1",
                                                 )),
                                             const SizedBox(
-                                              height: 10.0,
+                                              height: 3.0,
                                             ),
                                             Padding(
                                               padding: const EdgeInsets.all(5),
@@ -247,6 +282,7 @@ class _RecipeAddState extends State<RecipeAdd> {
                   ),
 
                   TextField(
+                    keyboardType: TextInputType.number,
                     controller: _textEditingController1,
                     maxLines: null, // Set maxLines to null for multiline input
                     decoration: InputDecoration(

@@ -1,4 +1,6 @@
 
+import '../data/food_data.dart';
+
 class StateService {
 
   static List<String> states = [
@@ -6,11 +8,13 @@ class StateService {
     'AasdsdxDS',
     'absgaskjas'
   ];
+  static List<FoodData> statesObj = [];
 
-  static List<String> getSuggestions(String query) {
-    List<String> matches = [];
-    matches.addAll(states);
-    matches.retainWhere((s) => s.toLowerCase().contains(query.toLowerCase()));
+
+  static List<FoodData> getSuggestions(String query) {
+    List<FoodData> matches = [];
+    matches.addAll(statesObj);
+    matches.retainWhere((s) => s.name.toLowerCase().contains(query.toLowerCase()));
     return matches;
   }
 
@@ -20,4 +24,7 @@ class StateService {
   }
 
 
+  static reloadDataObj(data){
+    statesObj = data;
+  }
 }

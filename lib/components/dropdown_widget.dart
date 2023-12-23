@@ -39,7 +39,7 @@ class _DropdownWidgetState extends State<DropdownWidget> {
                     bottomRight: Radius.circular(6),
                     bottomLeft: Radius.circular(6))),
             child: DropdownButton<String>(
-              value: widget.selected,
+              value: selectedValue,
               onChanged: (String? newValue) {
                 setState(() {
                   selectedValue = newValue!;

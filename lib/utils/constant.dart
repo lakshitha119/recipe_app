@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 
 class Constant {
 
-  static const domain = "https://api.textware.lk";
+  static const domain = "https://mrnutritions.azurewebsites.net";
 
 
 
