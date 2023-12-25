@@ -3,15 +3,18 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:recipe_app/components/nutrition_row.dart';
 import 'package:recipe_app/components/recipe_card.dart';
 import 'package:recipe_app/utils/constant.dart';
 
 import '../components/circle_loader.dart';
+import '../services/api.dart';
 
 class ViewRecipe extends StatefulWidget {
   final String title;
+  final String type;
 
-  const ViewRecipe({Key? key, required this.title}) : super(key: key);
+  const ViewRecipe({Key? key, required this.title, required this.type}) : super(key: key);
 
   @override
   _ViewRecipeState createState() => _ViewRecipeState();
@@ -29,14 +32,49 @@ class _ViewRecipeState extends State<ViewRecipe> {
   void initState() {
     super.initState();
 
+
+    loadNutritionData();
+
+  }
+
+  var nutritionList = [];
+  List<Widget> nutritionListViews = [];
+
+  loadNutritionData(){
     Timer.run(() {
       CircleLoader.showCustomDialog(context);
     });
-    t = Timer(const Duration(seconds: 3), () {
-      Timer.run(() {
-        CircleLoader.hideLoader(context);
+    if(widget.type=="Meal"){
+
+
+    }else{
+      APIManager().getRequest(Constant.domain + "/api/v1/Recipe/65898aeed82b0fb262c0f8fe")
+          .then((res) {
+            CircleLoader.hideLoader(context);
+
+            var nutritionList = res["results"]["ingredients"][0]["nutritions"];
+
+            if(nutritionList==null){
+            }else{
+
+
+              if (nutritionList.length != 0) {
+                for (var item in nutritionList) {
+                  var amount = item["amount"].toString();
+                  setState(() {
+                    nutritionListViews.add(NutritionRow(title: item["name"]+" "+amount + item["unitName"], amount: amount));
+                    // nutritionList = nutritionList;
+                  });
+                }
+              }
+
+
+
+            }
+
       });
-    });
+    }
+
   }
 
   @override
@@ -47,12 +85,12 @@ class _ViewRecipeState extends State<ViewRecipe> {
         centerTitle: false,
         title: Row(
           children: [
-            SizedBox(
+            const SizedBox(
               width: 1,
             ),
             Text(
               widget.title,
-              style: TextStyle(
+              style: const TextStyle(
                 fontFamily: "Roboto",
                 letterSpacing: 1.0,
                 fontSize: 18.0,
@@ -81,7 +119,7 @@ class _ViewRecipeState extends State<ViewRecipe> {
                   ),
                 ],
               ),
-              child: const Column(
+              child:  Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -125,96 +163,9 @@ class _ViewRecipeState extends State<ViewRecipe> {
                               fontSize: 20.0, fontWeight: FontWeight.bold)),
                     ],
                   ),
-                  Divider(
-                    color: Colors.black,
-                    thickness: 1.0,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text("Total Fat 5g",
-                          style: TextStyle(
-                              fontSize: 16.0, fontWeight: FontWeight.bold)),
-                      Text("6%",
-                          style: TextStyle(
-                              fontSize: 16.0, fontWeight: FontWeight.bold)),
-                    ],
-                  ),
-                  Divider(
-                    color: Colors.black,
-                    thickness: 1.0,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text("    Stated Fat 0.5g",
-                          style: TextStyle(
-                              fontSize: 16.0, fontWeight: FontWeight.bold)),
-                      Text("3%",
-                          style: TextStyle(
-                              fontSize: 16.0, fontWeight: FontWeight.bold)),
-                    ],
-                  ),
-                  Divider(
-                    color: Colors.black,
-                    thickness: 1.0,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text("Chrolstorol 0g",
-                          style: TextStyle(
-                              fontSize: 16.0, fontWeight: FontWeight.bold)),
-                      Text("0%",
-                          style: TextStyle(
-                              fontSize: 16.0, fontWeight: FontWeight.bold)),
-                    ],
-                  ),
-                  Divider(
-                    color: Colors.black,
-                    thickness: 1.0,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text("Sodimum 0g",
-                          style: TextStyle(
-                              fontSize: 16.0, fontWeight: FontWeight.bold)),
-                      Text("0%",
-                          style: TextStyle(
-                              fontSize: 16.0, fontWeight: FontWeight.bold)),
-                    ],
-                  ),
-                  Divider(
-                    color: Colors.black,
-                    thickness: 1.0,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text("Total Carbydete 0g",
-                          style: TextStyle(
-                              fontSize: 16.0, fontWeight: FontWeight.bold)),
-                      Text("0%",
-                          style: TextStyle(
-                              fontSize: 16.0, fontWeight: FontWeight.bold)),
-                    ],
-                  ),
-                  Divider(
-                    color: Colors.black,
-                    thickness: 1.0,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text("Protien 0g",
-                          style: TextStyle(
-                              fontSize: 16.0, fontWeight: FontWeight.bold)),
-                      Text("0%",
-                          style: TextStyle(
-                              fontSize: 16.0, fontWeight: FontWeight.bold)),
-                    ],
-                  ),
+                  Column(children: nutritionListViews,)
+
+
                 ],
               ))),
     );

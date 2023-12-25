@@ -12,6 +12,7 @@ import '../components/circle_loader.dart';
 import '../components/dropdown_widget.dart';
 import '../services/api.dart';
 import '../utils/constant.dart';
+import '../utils/toast.dart';
 
 class RecipeAdd extends StatefulWidget {
   const RecipeAdd({Key? key}) : super(key: key);
@@ -40,6 +41,7 @@ class _RecipeAddState extends State<RecipeAdd> {
   TextEditingController _recipeNumOfServCon = TextEditingController();
   List<FoodData> allFilterList = [];
   var ingredients = [];
+
   @override
   void initState() {
     super.initState();
@@ -59,7 +61,6 @@ class _RecipeAddState extends State<RecipeAdd> {
 
     print('Selected value: $selectedMeasurement');
   }
-
 
   Future<List<FoodData>> fetchSuggestions(String query) async {
     allFilterList = [];
@@ -81,8 +82,9 @@ class _RecipeAddState extends State<RecipeAdd> {
     return allFilterList;
   }
 
-  addIngObj(){
-    _recipeIngCon.text += "${selectedIngName+" "+_ingAmountCon.text}$selectedMeasurement\n" ;
+  addIngObj() {
+    _recipeIngCon.text +=
+        "${selectedIngName + " " + _ingAmountCon.text}$selectedMeasurement\n";
     // ingredients.
     ingredients.add({
       "fdcId": selectedIngId,
@@ -92,48 +94,30 @@ class _RecipeAddState extends State<RecipeAdd> {
     Navigator.of(context).pop();
   }
 
-
-  saveRecipe() async{
+  saveRecipe() async {
     Timer.run(() {
       CircleLoader.showCustomDialog(context);
     });
 
-    var data  = {
+    var data = {
       "name": _recipeNameCon.text,
       "description": "none",
       "ingredients": ingredients,
       "userId": "1",
       "servesFor": _recipeNumOfServCon.text
     };
-    await APIManager().postRequest(Constant.domain+"/api/v1/Recipe", data).then((res){
-
+    await APIManager()
+        .postRequest(Constant.domain + "/api/v1/Recipe", data)
+        .then((res) {
       print(res);
       CircleLoader.hideLoader(context);
 
-      if(res["isSucess"]){
-        Fluttertoast.showToast(
-            msg: "Recipe Added",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.green,
-            textColor: Colors.white,
-            fontSize: 16.0
-        );
-      }else{
-        Fluttertoast.showToast(
-            msg: "Failed to add recipe",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.red,
-            textColor: Colors.white,
-            fontSize: 16.0
-        );
+      if (res["isSucess"]) {
+        MyToast.showSuccess("Recipe Added");
+      } else {
+        MyToast.showError("Failed to add recipe");
       }
-
     });
-
   }
 
   @override
@@ -162,7 +146,6 @@ class _RecipeAddState extends State<RecipeAdd> {
         backgroundColor: Color.fromARGB(255, 0, 23, 147),
       ),
       body: SingleChildScrollView(
-
         physics: const AlwaysScrollableScrollPhysics(),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -264,37 +247,44 @@ class _RecipeAddState extends State<RecipeAdd> {
                                               ),
                                             ),
                                             Text(selectedIngName),
-                                             Padding(
+                                            Padding(
                                               padding: const EdgeInsets.all(5),
                                               child: TextField(
                                                   controller: _ingAmountCon,
-                                                  keyboardType: TextInputType.number,
+                                                  keyboardType: TextInputType
+                                                      .number,
                                                   autofocus: true,
-                                                  decoration: const InputDecoration(
-                                                      border:
-                                                          OutlineInputBorder(),
-                                                      labelText: 'Amount')),
+                                                  decoration:
+                                                      const InputDecoration(
+                                                          border:
+                                                              OutlineInputBorder(),
+                                                          labelText: 'Amount')),
                                             ),
                                             Padding(
                                                 padding:
-                                                    const EdgeInsets.all(8),
+                                                    const EdgeInsets.all(0),
                                                 child: DropdownWidget(
-                                                  onChanged: (val){
+                                                  onChanged: (val) {
                                                     setState(() {
                                                       selectedMeasurement = val;
                                                     });
                                                   },
                                                   title: "Select Measurement",
                                                   items: const [
-                                                    "G" , "KG" , "ML" , "L" , "Cup" , "tbl spoon" , "t spoon"
+                                                    "G",
+                                                    "KG",
+                                                    "ML",
+                                                    "L",
+                                                    "Cup",
+                                                    "tbl spoon",
+                                                    "t spoon"
                                                   ],
-                                                  selectedValue: selectedMeasurement,
+                                                  selectedValue:
+                                                      selectedMeasurement,
                                                 )),
-                                            const SizedBox(
-                                              height: 3.0,
-                                            ),
+
                                             Padding(
-                                              padding: const EdgeInsets.all(5),
+                                              padding: const EdgeInsets.all(0),
                                               child: ElevatedButton(
                                                 child: const Text('Add'),
                                                 onPressed: () {
@@ -304,12 +294,10 @@ class _RecipeAddState extends State<RecipeAdd> {
                                                   //       .save();
                                                   // }
 
-                                                  if(selectedIngName!="" && selectedIngId!=0  ){
-
-                                                      addIngObj();
-                                                  }else{
-
-                                                  }
+                                                  if (selectedIngName != "" &&
+                                                      selectedIngId != 0) {
+                                                    addIngObj();
+                                                  } else {}
                                                 },
                                               ),
                                             )
@@ -376,7 +364,6 @@ class _RecipeAddState extends State<RecipeAdd> {
                     style: TextStyle(fontSize: 16),
                   ),
 
-
                   const TextField(
                     maxLines: null, // Set maxLines to null for multiline input
                     decoration: InputDecoration(
@@ -399,9 +386,15 @@ class _RecipeAddState extends State<RecipeAdd> {
                     ),
                     child: ElevatedButton(
                       onPressed: () {
-
+                        if (_recipeNameCon.text == "") {
+                          MyToast.showError("Please enter recipe name");
+                          return;
+                        }
+                        if (ingredients.length == 0) {
+                          MyToast.showError("Please add ingredient");
+                          return;
+                        }
                         saveRecipe();
-
                       },
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.transparent, elevation: 0),

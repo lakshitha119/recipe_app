@@ -1,22 +1,15 @@
 import 'dart:async';
 
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:recipe_app/services/api.dart';
 import 'package:recipe_app/utils/constant.dart';
 import '../components/circle_loader.dart';
-import '../components/custom_button.dart';
 import '../components/dropdown_widget.dart';
-import '../components/rounded_clickable_icon.dart';
 import 'package:intl/intl.dart';
 
-import '../data/food_data.dart';
 import '../data/recipe_data.dart';
-import '../utils/app_colors.dart';
-import '../utils/indicator.dart';
-import 'bar_chart_sample2.dart';
+import '../utils/toast.dart';
 
 class BuildMeal extends StatefulWidget {
   const BuildMeal({Key? key}) : super(key: key);
@@ -116,25 +109,10 @@ class _BuildMealState extends State<BuildMeal> {
     
     APIManager().postRequest(Constant.domain+"/api/Meals", data).then((res){
       if(res["isSucess"]){
-        Fluttertoast.showToast(
-            msg: "Meal Added",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.green,
-            textColor: Colors.white,
-            fontSize: 16.0
-        );
+        MyToast.showSuccess("Meal Added");
       }else{
-        Fluttertoast.showToast(
-            msg: "Failed to add meal",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.red,
-            textColor: Colors.white,
-            fontSize: 16.0
-        );
+        MyToast.showError("Failed to add meal");
+
       }
 
     });
@@ -380,15 +358,7 @@ class _BuildMealState extends State<BuildMeal> {
                       onPressed: () {
 
                         if(recipeList.length==0){
-                          Fluttertoast.showToast(
-                              msg: "please add a recipe",
-                              toastLength: Toast.LENGTH_SHORT,
-                              gravity: ToastGravity.BOTTOM,
-                              timeInSecForIosWeb: 1,
-                              backgroundColor: Colors.red,
-                              textColor: Colors.white,
-                              fontSize: 16.0
-                          );
+                          MyToast.showError("Please add a recipe");
                         }else{
                           saveMeal();
                         }
@@ -412,77 +382,6 @@ class _BuildMealState extends State<BuildMeal> {
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-//DropDown List
-const List<String> list = <String>[
-  '- Select Court -',
-  'Supreme Court',
-  'District Court',
-  'Court of Appeal'
-]; //DropDown Contain List
-
-class DropdownList extends StatefulWidget {
-  //1. required this.onChanged,
-  final Function onChanged;
-
-  const DropdownList({
-    Key? key,
-    required this.onChanged,
-  }) : super(key: key);
-
-  @override
-  State<DropdownList> createState() => _DropdownButtonExampleState();
-}
-
-//List Creater
-class _DropdownButtonExampleState extends State<DropdownList> {
-  String dropdownValue = list.first;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(10.0, 0, 10.0, 0),
-      decoration: BoxDecoration(
-        border: Border.all(
-            color: const Color.fromARGB(255, 0, 23, 147), width: 2.0),
-        borderRadius: BorderRadius.circular(5),
-      ),
-      height: 55,
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton<String>(
-          value: dropdownValue,
-          icon: const Icon(
-            Icons.arrow_drop_down,
-            size: 24.0,
-            color: Color.fromARGB(255, 0, 23, 147),
-          ),
-          elevation: 16,
-          style: const TextStyle(
-            fontSize: 14.0,
-            color: Color.fromARGB(255, 0, 23, 147),
-            fontFamily: "Roboto",
-            fontWeight: FontWeight.bold,
-          ),
-          isExpanded: true,
-          onChanged: (String? value) {
-            // This is called when the user selects an item.
-            setState(() {
-              dropdownValue = value!;
-            });
-            // 2. Call, callback passing the selected value
-            widget.onChanged(value);
-          },
-          items: list.map<DropdownMenuItem<String>>((String value) {
-            return DropdownMenuItem<String>(
-              value: value,
-              child: Text(value),
-            );
-          }).toList(),
         ),
       ),
     );

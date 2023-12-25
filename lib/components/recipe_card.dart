@@ -1,14 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../screens/nutrition_view.dart';
+
 class RecipeCard extends StatelessWidget {
   final String title;
   final String desc;
-  final dynamic onClick;
 
   const RecipeCard({
     Key? key,
-    this.onClick,
     required this.title,
     required this.desc,
   }) : super(key: key);
@@ -30,7 +30,6 @@ class RecipeCard extends StatelessWidget {
         ],
       ),
       child: InkWell(
-          onTap: onClick,
           child: Row(
                 children: [
                   Padding(
@@ -99,7 +98,13 @@ class RecipeCard extends StatelessWidget {
                             borderRadius: BorderRadius.circular(10.0),
                           ),
                           child: ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                                Navigator.of(context)
+                                    .push(MaterialPageRoute(builder: (context) =>  ViewRecipe(title: title,type: "Recipe")));
+
+
+
+                            },
                             style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.transparent,
                                 elevation: 0),

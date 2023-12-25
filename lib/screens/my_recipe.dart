@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:recipe_app/components/recipe_card.dart';
-import 'package:recipe_app/screens/recipe_view.dart';
+import 'package:recipe_app/screens/nutrition_view.dart';
 
 import '../components/circle_loader.dart';
 import '../services/api.dart';
@@ -90,10 +90,7 @@ class _MyRecipeState extends State<MyRecipe> {
       itemCount: allFilterList.length,
       itemBuilder: (context, index) {
         return ListTile(
-          title: RecipeCard(title: allFilterList[index]["name"],desc: " ",onClick: (){
-          Navigator.of(context)
-              .push(MaterialPageRoute(builder: (context) => const ViewRecipe(title: "Hello",)));
-        },),
+          title: RecipeCard(title: allFilterList[index]["name"],desc: " "),
         );
       },
     )
