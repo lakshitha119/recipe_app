@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:recipe_app/data/food_data.dart';
 import 'package:recipe_app/services/state_servies.dart';
 
@@ -23,6 +24,9 @@ class _RecipeAddState extends State<RecipeAdd> {
   List<dynamic> data = []; //ApiPass Body Data Holder
   String SelectedValueHolder = ""; //Dropdown Button Selected Value Holder
   String selectedValue = ""; //Dropdown Button Selected Value Holder
+  String selectedIngName = ""; //Dropdown Button Selected Value Holder
+  int selectedIngId = 0; //Dropdown Button Selected Value Holder
+  String selectedMeasurement = "G"; //Dropdown Button Selected Value Holder
   int selectedId = 0; //Dropdown Button Selected Value Holder
 
   final _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -30,35 +34,38 @@ class _RecipeAddState extends State<RecipeAdd> {
   late Timer t;
   static const blue = Color.fromARGB(255, 0, 23, 147);
   final _formKey = GlobalKey<FormState>();
-  TextEditingController _textEditingController = TextEditingController();
-  TextEditingController _textEditingController1 = TextEditingController();
+  TextEditingController _ingAmountCon = TextEditingController();
+  TextEditingController _recipeNameCon = TextEditingController();
+  TextEditingController _recipeIngCon = TextEditingController();
+  TextEditingController _recipeNumOfServCon = TextEditingController();
   List<FoodData> allFilterList = [];
-
+  var ingredients = [];
   @override
   void initState() {
     super.initState();
 
-    // Timer.run(() {
-    //   CircleLoader.showCustomDialog(context);
-    // });
-    // t = Timer(const Duration(seconds: 3), () {
-    //   Timer.run(() {
-    //     CircleLoader.hideLoader(context);
-    //   });
-    // });
-    _textEditingController.text = "250 gram beans \n1 tablespoon oilve oil";
-    _textEditingController1.text = "1";
+    _recipeIngCon.text = "";
+    _recipeNumOfServCon.text = "1";
+    _ingAmountCon.text = "1";
+    ingredients = [];
   }
+
+  void onChanged(String newValue) {
+    setState(() {
+      selectedMeasurement = newValue;
+      selectedValue = selectedValue;
+      selectedId = selectedId;
+    });
+
+    print('Selected value: $selectedMeasurement');
+  }
+
 
   Future<List<FoodData>> fetchSuggestions(String query) async {
     allFilterList = [];
-    print("value1");
     final value = await APIManager().getRequest(
         Constant.domain + "/api/v1/Food?name=${query}&pageNo=1&pageSize=10");
-
-    print("value2");
-    print(value);
-    if(value!=null && value['results']!=null){
+    if (value != null && value['results'] != null) {
       if (value['results'] != 0) {
         for (var item in value['results']) {
           allFilterList.add(FoodData(
@@ -70,9 +77,63 @@ class _RecipeAddState extends State<RecipeAdd> {
       } else {
         return allFilterList;
       }
-
     }
     return allFilterList;
+  }
+
+  addIngObj(){
+    _recipeIngCon.text += "${selectedIngName+" "+_ingAmountCon.text}$selectedMeasurement\n" ;
+    // ingredients.
+    ingredients.add({
+      "fdcId": selectedIngId,
+      "addedQty": _ingAmountCon.text,
+      "unit": selectedMeasurement
+    });
+    Navigator.of(context).pop();
+  }
+
+
+  saveRecipe() async{
+    Timer.run(() {
+      CircleLoader.showCustomDialog(context);
+    });
+
+    var data  = {
+      "name": _recipeNameCon.text,
+      "description": "none",
+      "ingredients": ingredients,
+      "userId": "1",
+      "servesFor": _recipeNumOfServCon.text
+    };
+    await APIManager().postRequest(Constant.domain+"/api/v1/Recipe", data).then((res){
+
+      print(res);
+      CircleLoader.hideLoader(context);
+
+      if(res["isSucess"]){
+        Fluttertoast.showToast(
+            msg: "Recipe Added",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.green,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
+      }else{
+        Fluttertoast.showToast(
+            msg: "Failed to add recipe",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
+      }
+
+    });
+
   }
 
   @override
@@ -101,7 +162,7 @@ class _RecipeAddState extends State<RecipeAdd> {
         backgroundColor: Color.fromARGB(255, 0, 23, 147),
       ),
       body: SingleChildScrollView(
-        
+
         physics: const AlwaysScrollableScrollPhysics(),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -115,17 +176,20 @@ class _RecipeAddState extends State<RecipeAdd> {
                   //First Selection
                   //Spacer
 
-                  Text(
+                  const Text(
                     'Enter Recipe Name',
                     style: TextStyle(fontSize: 16),
                   ),
 
                   TextField(
-                    decoration: InputDecoration(
+                    controller: _recipeNameCon,
+                    decoration: const InputDecoration(
                       border: OutlineInputBorder(),
                     ),
                   ),
-
+                  const SizedBox(
+                    height: 5,
+                  ),
                   Container(
                     width: MediaQuery.of(context).size.width / 100 * 100,
                     decoration: BoxDecoration(
@@ -148,8 +212,8 @@ class _RecipeAddState extends State<RecipeAdd> {
                                     clipBehavior: Clip.none,
                                     children: <Widget>[
                                       Positioned(
-                                        right: -40,
-                                        top: -40,
+                                        right: -30,
+                                        top: -30,
                                         child: InkResponse(
                                           onTap: () {
                                             Navigator.of(context).pop();
@@ -193,19 +257,20 @@ class _RecipeAddState extends State<RecipeAdd> {
                                                 },
                                                 onSelected: (city) {
                                                   setState(() {
-                                                    selectedValue = city.name;
-                                                    selectedId = city.fdcId;
+                                                    selectedIngName = city.name;
+                                                    selectedIngId = city.fdcId;
                                                   });
                                                 },
                                               ),
                                             ),
-                                            Text(selectedValue),
-                                            const Padding(
-                                              padding: EdgeInsets.all(5),
+                                            Text(selectedIngName),
+                                             Padding(
+                                              padding: const EdgeInsets.all(5),
                                               child: TextField(
+                                                  controller: _ingAmountCon,
                                                   keyboardType: TextInputType.number,
                                                   autofocus: true,
-                                                  decoration: InputDecoration(
+                                                  decoration: const InputDecoration(
                                                       border:
                                                           OutlineInputBorder(),
                                                       labelText: 'Amount')),
@@ -214,14 +279,16 @@ class _RecipeAddState extends State<RecipeAdd> {
                                                 padding:
                                                     const EdgeInsets.all(8),
                                                 child: DropdownWidget(
+                                                  onChanged: (val){
+                                                    setState(() {
+                                                      selectedMeasurement = val;
+                                                    });
+                                                  },
                                                   title: "Select Measurement",
-                                                  items: [
-                                                    "Op1",
-                                                    "Op2",
-                                                    "Op3",
-                                                    "Op4"
+                                                  items: const [
+                                                    "G" , "KG" , "ML" , "L" , "Cup" , "tbl spoon" , "t spoon"
                                                   ],
-                                                  selected: "Op1",
+                                                  selectedValue: selectedMeasurement,
                                                 )),
                                             const SizedBox(
                                               height: 3.0,
@@ -231,10 +298,17 @@ class _RecipeAddState extends State<RecipeAdd> {
                                               child: ElevatedButton(
                                                 child: const Text('Add'),
                                                 onPressed: () {
-                                                  if (_formKey.currentState!
-                                                      .validate()) {
-                                                    _formKey.currentState!
-                                                        .save();
+                                                  // if (_formKey.currentState!
+                                                  //     .validate()) {
+                                                  //   _formKey.currentState!
+                                                  //       .save();
+                                                  // }
+
+                                                  if(selectedIngName!="" && selectedIngId!=0  ){
+
+                                                      addIngObj();
+                                                  }else{
+
                                                   }
                                                 },
                                               ),
@@ -262,7 +336,9 @@ class _RecipeAddState extends State<RecipeAdd> {
                       ),
                     ),
                   ),
-
+                  const SizedBox(
+                    height: 5,
+                  ),
                   const Text(
                     'Selected Recipe Ingredient',
                     style: TextStyle(fontSize: 16),
@@ -270,11 +346,14 @@ class _RecipeAddState extends State<RecipeAdd> {
 
                   TextField(
                     enabled: false,
-                    controller: _textEditingController,
+                    controller: _recipeIngCon,
                     maxLines: null, // Set maxLines to null for multiline input
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),
                     ),
+                  ),
+                  const SizedBox(
+                    height: 5,
                   ),
                   const Text(
                     'Select Number of Serving ',
@@ -283,18 +362,22 @@ class _RecipeAddState extends State<RecipeAdd> {
 
                   TextField(
                     keyboardType: TextInputType.number,
-                    controller: _textEditingController1,
+                    controller: _recipeNumOfServCon,
                     maxLines: null, // Set maxLines to null for multiline input
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       border: OutlineInputBorder(),
                     ),
+                  ),
+                  const SizedBox(
+                    height: 5,
                   ),
                   const Text(
                     'Selected Serving Unit',
                     style: TextStyle(fontSize: 16),
                   ),
 
-                  TextField(
+
+                  const TextField(
                     maxLines: null, // Set maxLines to null for multiline input
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),
@@ -315,7 +398,11 @@ class _RecipeAddState extends State<RecipeAdd> {
                       borderRadius: BorderRadius.circular(10.0),
                     ),
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+
+                        saveRecipe();
+
+                      },
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.transparent, elevation: 0),
                       child: const Text(

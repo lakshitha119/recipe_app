@@ -446,8 +446,9 @@ class _HomeState extends State<Home> {
                   const SizedBox(
                     height: 1,
                   ),
-                  AspectRatio(
-                    aspectRatio: 2.2,
+                  Container(
+                    width: 500,
+                    height: 200,
                     child: PieChart(
                       PieChartData(
                         pieTouchData: PieTouchData(
@@ -473,6 +474,9 @@ class _HomeState extends State<Home> {
                         centerSpaceRadius: 0,
                         sections: showingSections(),
                       ),
+                      swapAnimationDuration: const Duration(milliseconds: 800),
+                      swapAnimationCurve: Curves.easeInOut,
+                      
                     ),
                   ),
                   BarChartSample2(),

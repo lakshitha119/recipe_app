@@ -17,8 +17,7 @@ class RecipeCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.fromLTRB(5.0, 5.0, 5.0, 0.0),
-      padding: const EdgeInsets.all(5),
+      padding: const EdgeInsets.all(2),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -37,8 +36,8 @@ class RecipeCard extends StatelessWidget {
                   Padding(
                       padding: const EdgeInsets.all(1.0),
                       child: Image.asset(
-                        "assets/images/add.png",
-                        scale: 1.8,
+                        "assets/images/3565418.png",
+                        scale: 7,
                       )),
                   const SizedBox(
                     width: 10,

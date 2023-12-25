@@ -1,10 +1,15 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:recipe_app/services/api.dart';
+import 'package:recipe_app/utils/constant.dart';
 import '../components/custom_button.dart';
 import '../components/dropdown_widget.dart';
 import '../components/rounded_clickable_icon.dart';
 import 'package:intl/intl.dart';
 
+import '../data/food_data.dart';
+import '../data/recipe_data.dart';
 import '../utils/app_colors.dart';
 import '../utils/indicator.dart';
 import 'bar_chart_sample2.dart';
@@ -17,7 +22,7 @@ class BuildMeal extends StatefulWidget {
 }
 
 class _BuildMealState extends State<BuildMeal> {
-  final TextEditingController _textEditingController =
+  final TextEditingController _dateController =
       TextEditingController(); //Text of TextField
   final TextEditingController _textEditingController1 =
       TextEditingController(); //Text of TextField
@@ -25,22 +30,21 @@ class _BuildMealState extends State<BuildMeal> {
   String title = "Good Morning!";
   int touchedIndex = -1;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  var isWebView = false;
+  // var isWebView = false;
 
-  var dcSelected = true;
-  var scSelected = false;
-  var coaSelected = false;
-  late Widget webView;
-  var currentUrl = "google.com";
+  // var dcSelected = true;
+  // var scSelected = false;
+  // var coaSelected = false;
+  // late Widget webView;
 
   static const yellow = Color(0xfffeb703);
   static const blue = Color.fromARGB(255, 0, 23, 147);
-
+  List<RecipeData> allFilterList = [];
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    setTitle();
+    fetchSuggestions();
   }
 
   void _ShowDatePicker(textEditingController) {
@@ -71,23 +75,40 @@ class _BuildMealState extends State<BuildMeal> {
     });
   }
 
-  setTitle() {
-    var today = DateTime.now();
-    var curHr = today.hour;
 
-    if (curHr < 12) {
-      setState(() {
-        title = 'Good Morning!';
-      });
-    } else if (curHr < 18) {
-      setState(() {
-        title = 'Good Afternoon!';
-      });
-    } else {
-      setState(() {
-        title = 'Good Evening!';
-      });
-    }
+  fetchSuggestions() async {
+      allFilterList = [];
+      final value = await APIManager().getRequest(
+          Constant.domain + "/api/v1/Recipe/GetByUserName/1");
+      if (value != null && value['results'] != null) {
+        if (value['results'] != 0) {
+          for (var item in value['results']) {
+            allFilterList.add(RecipeData(
+                id: item['id'] as String,
+                name: item['name'] as String));
+          }
+          setState(() {
+            allFilterList = allFilterList;
+          });
+        } else {
+        }
+      }
+  }
+
+  saveMeal() async{
+    var data = {
+      "mealDate": _dateController.text,
+      "description": "none",
+      "recipies": [
+        {
+          "id": "string"
+        }
+      ],
+      "userId": "string"
+    };
+    
+    APIManager().postRequest(Constant.domain+"", data);
+    
   }
 
   @override
@@ -97,7 +118,7 @@ class _BuildMealState extends State<BuildMeal> {
       key: _scaffoldKey,
       appBar: AppBar(
         centerTitle: false,
-        title: Row(
+        title: const Row(
           children: [
             SizedBox(
               width: 1,
@@ -143,10 +164,10 @@ class _BuildMealState extends State<BuildMeal> {
                               fontFamily: "Roboto",
                               fontWeight: FontWeight.bold,
                             ),
-                            controller: _textEditingController,
+                            controller: _dateController,
                             decoration: InputDecoration(
                               suffixIcon: IconButton(
-                                onPressed: _textEditingController.clear,
+                                onPressed: _dateController.clear,
                                 icon: const Icon(
                                   Icons.clear,
                                   color: blue,
@@ -185,7 +206,7 @@ class _BuildMealState extends State<BuildMeal> {
                                 color: Colors.white,
                               ),
                               onPressed: () {
-                                _ShowDatePicker(_textEditingController);
+                                _ShowDatePicker(_dateController);
                               }),
                         )
                       ],
@@ -193,16 +214,53 @@ class _BuildMealState extends State<BuildMeal> {
                   ),
 
                   //SizedBox(height: 10.0,),
-                  Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
-                      child: DropdownWidget(title: "Meal Type",items: ["Op1","Op2","Op3","Op4"],selected: "Op1",)),
-                  const SizedBox(
-                    height: 10.0,
-                  ),
+                  // Padding(
+                  //     padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+                  //     child: DropdownWidget(
+                  //       onChanged: (val){
+                  //         print(val);
+                  //       },title: "Meal Type",items: ["Op1","Op2","Op3","Op4"],selected: "Op1",)),
+                  // const SizedBox(
+                  //   height: 10.0,
+                  // ),
 
                   Text(
                     'Enter Recipe',
                     style: TextStyle(fontSize: 16),
+                  ),
+
+                  Padding(
+                    padding: const EdgeInsets.all(5),
+                    child: TypeAheadField<RecipeData>(
+                      suggestionsCallback: (value) {
+                        print(value);
+                        return allFilterList;
+                      },
+                      builder: (context, controller,
+                          focusNode) {
+                        return TextField(
+                            controller: controller,
+                            focusNode: focusNode,
+                            autofocus: true,
+                            decoration: const InputDecoration(
+                                border:
+                                OutlineInputBorder(),
+                                labelText:
+                                'Search For Ingredient'));
+                      },
+                      itemBuilder:
+                          (context, foodData) {
+                        return ListTile(
+                          title: Text(foodData.name),
+                        );
+                      },
+                      onSelected: (city) {
+                        setState(() {
+                          // selectedIngName = city.name;
+                          // selectedIngId = city.fdcId;
+                        });
+                      },
+                    ),
                   ),
 
                   TextField(
@@ -235,7 +293,7 @@ class _BuildMealState extends State<BuildMeal> {
 
 
 
-                  Text(
+                  const Text(
                     'Selected Recipes',
                     style: TextStyle(fontSize: 16),
                   ),

@@ -7,6 +7,8 @@ import 'package:recipe_app/components/recipe_card.dart';
 import 'package:recipe_app/screens/recipe_view.dart';
 
 import '../components/circle_loader.dart';
+import '../services/api.dart';
+import '../utils/constant.dart';
 
 
 class MyRecipe extends StatefulWidget {
@@ -29,14 +31,28 @@ class _MyRecipeState extends State<MyRecipe> {
   void initState() {
     super.initState();
 
-    // Timer.run(() {
-    //   CircleLoader.showCustomDialog(context);
-    // });
-    // t = Timer(const Duration(seconds: 3), () {
-    //   Timer.run(() {
-    //     CircleLoader.hideLoader(context);
-    //   });
-    // });
+    loadData();
+  }
+
+  var allFilterList = [];
+
+  loadData() async{
+
+    allFilterList = [];
+
+    final value = await APIManager().getRequest(
+        Constant.domain + "/api/v1/Recipe/GetByUserName/1");
+    if (value != null && value['results'] != null) {
+      if (value['results'] != 0) {
+
+        setState(() {
+          allFilterList = value['results'];
+        });
+        return allFilterList;
+      } else {
+        return allFilterList;
+      }
+    }
   }
 
   @override
@@ -64,17 +80,27 @@ class _MyRecipeState extends State<MyRecipe> {
         ),
         backgroundColor: Color.fromARGB(255, 0, 23, 147),
       ),
-      body:  SingleChildScrollView(
-      physics: const AlwaysScrollableScrollPhysics(),
-    child: Column(children: [
-
-      RecipeCard(title: "Dhal Curry",desc: " ",onClick: (){
+      body:
+    ListView.builder(
+      itemCount: allFilterList.length,
+      itemBuilder: (context, index) {
+        return ListTile(
+          title: RecipeCard(title: allFilterList[index]["name"],desc: " ",onClick: (){
           Navigator.of(context)
               .push(MaterialPageRoute(builder: (context) => const ViewRecipe(title: "Hello",)));
         },),
-      RecipeCard(title: "Fish Curry",desc: " ",),
+        );
+      },
+    )
+    // Column(children: [
+    //   RecipeCard(title: "Dhal Curry",desc: " ",onClick: (){
+    //       Navigator.of(context)
+    //           .push(MaterialPageRoute(builder: (context) => const ViewRecipe(title: "Hello",)));
+    //     },),
+    //   RecipeCard(title: "Fish Curry",desc: " ",),
+    //   ],)
 
-      ],)),
+
     );
   }
 }

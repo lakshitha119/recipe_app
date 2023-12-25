@@ -5,6 +5,7 @@ class APIManager{
 
   Future<dynamic>  postRequest(url,data) async {
 
+    print(data.toString());
     final response = await http.post(
       Uri.parse(url),
       headers: <String, String>{
