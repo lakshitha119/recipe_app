@@ -37,12 +37,17 @@ class _MyRecipeState extends State<MyRecipe> {
   var allFilterList = [];
 
   loadData() async{
-
+    Timer.run(() {
+      CircleLoader.showCustomDialog(context);
+    });
     allFilterList = [];
 
     final value = await APIManager().getRequest(
         Constant.domain + "/api/v1/Recipe/GetByUserName/1");
     if (value != null && value['results'] != null) {
+
+        CircleLoader.hideLoader(context);
+
       if (value['results'] != 0) {
 
         setState(() {

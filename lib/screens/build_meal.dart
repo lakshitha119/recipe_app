@@ -1,8 +1,12 @@
+import 'dart:async';
+
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:recipe_app/services/api.dart';
 import 'package:recipe_app/utils/constant.dart';
+import '../components/circle_loader.dart';
 import '../components/custom_button.dart';
 import '../components/dropdown_widget.dart';
 import '../components/rounded_clickable_icon.dart';
@@ -22,7 +26,8 @@ class BuildMeal extends StatefulWidget {
 }
 
 class _BuildMealState extends State<BuildMeal> {
-  final TextEditingController _dateController =
+  final TextEditingController _dateController = TextEditingController();
+  final TextEditingController recipeNameCon =
       TextEditingController(); //Text of TextField
   final TextEditingController _textEditingController1 =
       TextEditingController(); //Text of TextField
@@ -30,12 +35,12 @@ class _BuildMealState extends State<BuildMeal> {
   String title = "Good Morning!";
   int touchedIndex = -1;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  var selectedName;
+  var selectedId;
+  var mealType = "Breakfast";
   // var isWebView = false;
 
-  // var dcSelected = true;
-  // var scSelected = false;
-  // var coaSelected = false;
-  // late Widget webView;
+  var recipeList = [];
 
   static const yellow = Color(0xfffeb703);
   static const blue = Color.fromARGB(255, 0, 23, 147);
@@ -45,6 +50,7 @@ class _BuildMealState extends State<BuildMeal> {
     // TODO: implement initState
     super.initState();
     fetchSuggestions();
+    _dateController.text = DateTime.now().toString().split(" ")[0];
   }
 
   void _ShowDatePicker(textEditingController) {
@@ -77,10 +83,14 @@ class _BuildMealState extends State<BuildMeal> {
 
 
   fetchSuggestions() async {
+    Timer.run(() {
+      CircleLoader.showCustomDialog(context);
+    });
       allFilterList = [];
       final value = await APIManager().getRequest(
           Constant.domain + "/api/v1/Recipe/GetByUserName/1");
       if (value != null && value['results'] != null) {
+          CircleLoader.hideLoader(context);
         if (value['results'] != 0) {
           for (var item in value['results']) {
             allFilterList.add(RecipeData(
@@ -97,17 +107,37 @@ class _BuildMealState extends State<BuildMeal> {
 
   saveMeal() async{
     var data = {
+      "mealType": mealType=="Breakfast" ? 0 : mealType=="Lunch" ? 1 : 2,
       "mealDate": _dateController.text,
       "description": "none",
-      "recipies": [
-        {
-          "id": "string"
-        }
-      ],
-      "userId": "string"
+      "recipies": recipeList,
+      "userId": "1"
     };
     
-    APIManager().postRequest(Constant.domain+"", data);
+    APIManager().postRequest(Constant.domain+"/api/Meals", data).then((res){
+      if(res["isSucess"]){
+        Fluttertoast.showToast(
+            msg: "Meal Added",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.green,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
+      }else{
+        Fluttertoast.showToast(
+            msg: "Failed to add meal",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
+      }
+
+    });
     
   }
 
@@ -225,12 +255,32 @@ class _BuildMealState extends State<BuildMeal> {
                   // ),
 
                   Text(
-                    'Enter Recipe',
+                    'Meal Type',
                     style: TextStyle(fontSize: 16),
                   ),
 
                   Padding(
-                    padding: const EdgeInsets.all(5),
+                      padding:
+                      const EdgeInsets.all(8),
+                      child: DropdownWidget(
+                        onChanged: (val){
+                          setState(() {
+                            mealType = val;
+                          });
+                        },
+                        title: "Select Meal Type",
+                        items: const [
+                          "Breakfast" , "Lunch" , "Dinner"
+                        ],
+                        selectedValue: mealType,
+                      )),
+ Text(
+                    'Search Recipe',
+                    style: TextStyle(fontSize: 16),
+                  ),
+
+                  Padding(
+                    padding: const EdgeInsets.all(0),
                     child: TypeAheadField<RecipeData>(
                       suggestionsCallback: (value) {
                         print(value);
@@ -244,9 +294,7 @@ class _BuildMealState extends State<BuildMeal> {
                             autofocus: true,
                             decoration: const InputDecoration(
                                 border:
-                                OutlineInputBorder(),
-                                labelText:
-                                'Search For Ingredient'));
+                                OutlineInputBorder()));
                       },
                       itemBuilder:
                           (context, foodData) {
@@ -254,40 +302,17 @@ class _BuildMealState extends State<BuildMeal> {
                           title: Text(foodData.name),
                         );
                       },
-                      onSelected: (city) {
-                        setState(() {
-                          // selectedIngName = city.name;
-                          // selectedIngId = city.fdcId;
-                        });
-                      },
-                    ),
-                  ),
+                      onSelected: (recipe) {
+                        print("recipe");
+                        print(recipe);
 
-                  TextField(
-                    maxLines: null, // Set maxLines to null for multiline input
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                  Container(
-                    width: MediaQuery.of(context).size.width / 100 * 20,
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [blue, Color.fromARGB(255, 4, 34, 193)],
-                        begin: Alignment.bottomCenter,
-                        end: Alignment.topCenter,
-                      ),
-                      borderRadius: BorderRadius.circular(5.0),
-                    ),
-                    child: ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.transparent, elevation: 0),
-                      child: const Icon(
-                        Icons.search,
-                        size: 24.0,
-                        color: Colors.white
-                      ),
+                        recipeList.add(
+                          {"id": recipe.id}
+                        );
+                        selectedName = recipe.name+" \n";
+                        selectedId = recipe.id;
+                        recipeNameCon.text += selectedName;
+                      },
                     ),
                   ),
 
@@ -300,12 +325,42 @@ class _BuildMealState extends State<BuildMeal> {
 
                   TextField(
                     enabled: false,
+                    controller: recipeNameCon,
                     maxLines: null, // Set maxLines to null for multiline input
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),
                     ),
                   ),
+                  Container(
+                    width: MediaQuery.of(context).size.width / 100 * 100,
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [blue, Color.fromARGB(255, 4, 34, 193)],
+                        begin: Alignment.bottomCenter,
+                        end: Alignment.topCenter,
+                      ),
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        recipeNameCon.text = "";
+                        recipeList.clear();
 
+                      },
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.transparent, elevation: 0),
+                      child: const Text(
+                        'Clear All',
+                        style: TextStyle(
+                          fontFamily: "Roboto",
+                          fontSize: 18.0,
+                          color: Colors.white,
+                          letterSpacing: 1.0,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
                   SizedBox(
                     height: 20,
                   ),
@@ -322,7 +377,23 @@ class _BuildMealState extends State<BuildMeal> {
                       borderRadius: BorderRadius.circular(10.0),
                     ),
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+
+                        if(recipeList.length==0){
+                          Fluttertoast.showToast(
+                              msg: "please add a recipe",
+                              toastLength: Toast.LENGTH_SHORT,
+                              gravity: ToastGravity.BOTTOM,
+                              timeInSecForIosWeb: 1,
+                              backgroundColor: Colors.red,
+                              textColor: Colors.white,
+                              fontSize: 16.0
+                          );
+                        }else{
+                          saveMeal();
+                        }
+
+                        },
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.transparent, elevation: 0),
                       child: const Text(

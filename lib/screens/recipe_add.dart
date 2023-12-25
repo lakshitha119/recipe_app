@@ -114,7 +114,7 @@ class _RecipeAddState extends State<RecipeAdd> {
         Fluttertoast.showToast(
             msg: "Recipe Added",
             toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.CENTER,
+            gravity: ToastGravity.BOTTOM,
             timeInSecForIosWeb: 1,
             backgroundColor: Colors.green,
             textColor: Colors.white,
@@ -124,7 +124,7 @@ class _RecipeAddState extends State<RecipeAdd> {
         Fluttertoast.showToast(
             msg: "Failed to add recipe",
             toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.CENTER,
+            gravity: ToastGravity.BOTTOM,
             timeInSecForIosWeb: 1,
             backgroundColor: Colors.red,
             textColor: Colors.white,

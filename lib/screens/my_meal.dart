@@ -8,6 +8,8 @@ import 'package:recipe_app/screens/recipe_view.dart';
 
 import '../components/circle_loader.dart';
 import '../components/meal_card.dart';
+import '../services/api.dart';
+import '../utils/constant.dart';
 
 
 class MyMeal extends StatefulWidget {
@@ -30,14 +32,33 @@ class _MyMealState extends State<MyMeal> {
   void initState() {
     super.initState();
 
-    // Timer.run(() {
-    //   CircleLoader.showCustomDialog(context);
-    // });
-    // t = Timer(const Duration(seconds: 3), () {
-    //   Timer.run(() {
-    //     CircleLoader.hideLoader(context);
-    //   });
-    // });
+    loadData();
+  }
+
+  var allFilterList = [];
+
+  loadData() async{
+    Timer.run(() {
+      CircleLoader.showCustomDialog(context);
+    });
+    allFilterList = [];
+
+    final value = await APIManager().getRequest(
+        Constant.domain + "/api/Meals/GetByUserName/1");
+    if (value != null && value['results'] != null) {
+
+      CircleLoader.hideLoader(context);
+
+      if (value['results'] != 0) {
+
+        setState(() {
+          allFilterList = value['results'];
+        });
+        return allFilterList;
+      } else {
+        return allFilterList;
+      }
+    }
   }
 
   @override
@@ -65,17 +86,19 @@ class _MyMealState extends State<MyMeal> {
         ),
         backgroundColor: Color.fromARGB(255, 0, 23, 147),
       ),
-      body:  SingleChildScrollView(
-      physics: const AlwaysScrollableScrollPhysics(),
-    child: Column(children: [
+      body:
 
-      MealCard(title: "Date - 2023-12-12",desc: "Meal Type - Lunch",onClick: (){
-        Navigator.of(context)
-            .push(MaterialPageRoute(builder: (context) => const ViewRecipe(title: "Hello",)));
-      },),
-      MealCard(title: "Date - 2023-12-14",desc: "Meal Type - Lunch",),
-
-      ],)),
+      ListView.builder(
+        itemCount: allFilterList.length,
+        itemBuilder: (context, index) {
+          return ListTile(
+            title: MealCard(title: allFilterList[index]["name"],desc: allFilterList[index]["mealType"],onClick: (){
+              Navigator.of(context)
+                  .push(MaterialPageRoute(builder: (context) => const ViewRecipe(title: "Hello",)));
+            },),
+          );
+        },
+      )
     );
   }
 }

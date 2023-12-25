@@ -15,7 +15,6 @@ class MealCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.fromLTRB(5.0, 5.0, 5.0, 0.0),
       padding: const EdgeInsets.all(5),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -35,13 +34,15 @@ class MealCard extends StatelessWidget {
           Padding(
               padding: const EdgeInsets.all(1.0),
               child: Image.asset(
-                "assets/images/add.png",
-                scale: 1.9,
+                "assets/images/meal.png",
+                scale: 3.5,
               )),
           SizedBox(
             width: 10,
           ),
-          Column(
+        Container(
+          width: MediaQuery.of(context).size.width / 100 * 30,
+         child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -49,9 +50,9 @@ class MealCard extends StatelessWidget {
                   style:
                       TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold)),
               Text(desc,
-                  style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold))
+                  style: TextStyle(fontSize: 12.0, fontWeight: FontWeight.bold))
             ],
-          ),
+          )),
           Spacer(),
           Column(
 
