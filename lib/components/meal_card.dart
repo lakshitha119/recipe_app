@@ -1,14 +1,19 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:recipe_app/screens/recipe_view.dart';
+
+import '../screens/nutrition_view.dart';
 
 class MealCard extends StatelessWidget {
+  final String id;
   final String title;
   final String desc;
-  final dynamic onClick;
 
   const MealCard({
     Key? key,
-    this.onClick,required this.title, required this.desc,
+    required this.title,
+    required this.desc,
+    required this.id,
   }) : super(key: key);
   static const blue = Color.fromARGB(255, 0, 23, 147);
 
@@ -28,8 +33,7 @@ class MealCard extends StatelessWidget {
         ],
       ),
       child: InkWell(
-          onTap: onClick,
-          child:  Row(
+          child: Row(
         children: [
           Padding(
               padding: const EdgeInsets.all(1.0),
@@ -37,25 +41,25 @@ class MealCard extends StatelessWidget {
                 "assets/images/meal.png",
                 scale: 3.5,
               )),
-          SizedBox(
+          const SizedBox(
             width: 10,
           ),
-        Container(
-          width: MediaQuery.of(context).size.width / 100 * 30,
-         child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(title,
-                  style:
-                      TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold)),
-              Text(desc,
-                  style: TextStyle(fontSize: 12.0, fontWeight: FontWeight.bold))
-            ],
-          )),
+          Container(
+              width: MediaQuery.of(context).size.width / 100 * 30,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title,
+                      style: TextStyle(
+                          fontSize: 16.0, fontWeight: FontWeight.bold)),
+                  Text(desc,
+                      style: TextStyle(
+                          fontSize: 12.0, fontWeight: FontWeight.bold))
+                ],
+              )),
           Spacer(),
           Column(
-
             children: [
               Container(
                   width: MediaQuery.of(context).size.width / 100 * 33,
@@ -68,10 +72,13 @@ class MealCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10.0),
                   ),
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => ViewRecipe(
+                              id: id, title: title, type: "Meal")));
+                    },
                     style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.transparent,
-                        elevation: 0),
+                        backgroundColor: Colors.transparent, elevation: 0),
                     child: const Text(
                       'Recipes',
                       style: TextStyle(
@@ -83,7 +90,9 @@ class MealCard extends StatelessWidget {
                       ),
                     ),
                   )),
-              SizedBox(height: 5,),
+              const SizedBox(
+                height: 5,
+              ),
               Container(
                   width: MediaQuery.of(context).size.width / 100 * 33,
                   decoration: BoxDecoration(
@@ -95,10 +104,13 @@ class MealCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10.0),
                   ),
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => NutritionView(
+                              id: id, title: title, type: "Meal")));
+                    },
                     style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.transparent,
-                        elevation: 0),
+                        backgroundColor: Colors.transparent, elevation: 0),
                     child: const Text(
                       'Nutrition',
                       style: TextStyle(

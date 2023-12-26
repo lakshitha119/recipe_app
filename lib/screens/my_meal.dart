@@ -92,10 +92,7 @@ class _MyMealState extends State<MyMeal> {
         itemCount: allFilterList.length,
         itemBuilder: (context, index) {
           return ListTile(
-            title: MealCard(title: allFilterList[index]["name"],desc: allFilterList[index]["mealType"],onClick: (){
-              Navigator.of(context)
-                  .push(MaterialPageRoute(builder: (context) =>  ViewRecipe(title: allFilterList[index]["name"],type:"Meal")));
-            },),
+            title: MealCard(id:allFilterList[index]["id"],title: allFilterList[index]["name"],desc: allFilterList[index]["mealType"]),
           );
         },
       )

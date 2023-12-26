@@ -1,16 +1,18 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../screens/ingredient_view.dart';
 import '../screens/nutrition_view.dart';
 
 class RecipeCard extends StatelessWidget {
   final String title;
   final String desc;
+  final String id;
 
   const RecipeCard({
     Key? key,
     required this.title,
-    required this.desc,
+    required this.desc, required this.id,
   }) : super(key: key);
   static const blue = Color.fromARGB(255, 0, 23, 147);
 
@@ -71,7 +73,10 @@ class RecipeCard extends StatelessWidget {
                             borderRadius: BorderRadius.circular(10.0),
                           ),
                           child: ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.of(context)
+                                  .push(MaterialPageRoute(builder: (context) =>  ViewIngredient(id:id,title: title,type: "Recipe")));
+                            },
                             style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.transparent,
                                 elevation: 0),
@@ -100,10 +105,7 @@ class RecipeCard extends StatelessWidget {
                           child: ElevatedButton(
                             onPressed: () {
                                 Navigator.of(context)
-                                    .push(MaterialPageRoute(builder: (context) =>  ViewRecipe(title: title,type: "Recipe")));
-
-
-
+                                    .push(MaterialPageRoute(builder: (context) =>  NutritionView(id:id,title: title,type: "Recipe")));
                             },
                             style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.transparent,

@@ -41,6 +41,7 @@ class _RecipeAddState extends State<RecipeAdd> {
   TextEditingController _recipeNumOfServCon = TextEditingController();
   List<FoodData> allFilterList = [];
   var ingredients = [];
+  var _isDisable = false;
 
   @override
   void initState() {
@@ -95,6 +96,9 @@ class _RecipeAddState extends State<RecipeAdd> {
   }
 
   saveRecipe() async {
+    setState(() {
+      _isDisable = true;
+    });
     Timer.run(() {
       CircleLoader.showCustomDialog(context);
     });
@@ -111,7 +115,9 @@ class _RecipeAddState extends State<RecipeAdd> {
         .then((res) {
       print(res);
       CircleLoader.hideLoader(context);
-
+      setState(() {
+        _isDisable = false;
+      });
       if (res["isSucess"]) {
         MyToast.showSuccess("Recipe Added");
       } else {
@@ -385,7 +391,7 @@ class _RecipeAddState extends State<RecipeAdd> {
                       borderRadius: BorderRadius.circular(10.0),
                     ),
                     child: ElevatedButton(
-                      onPressed: () {
+                        onPressed: _isDisable? null :() {
                         if (_recipeNameCon.text == "") {
                           MyToast.showError("Please enter recipe name");
                           return;
@@ -394,6 +400,7 @@ class _RecipeAddState extends State<RecipeAdd> {
                           MyToast.showError("Please add ingredient");
                           return;
                         }
+
                         saveRecipe();
                       },
                       style: ElevatedButton.styleFrom(

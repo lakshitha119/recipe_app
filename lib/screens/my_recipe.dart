@@ -90,7 +90,7 @@ class _MyRecipeState extends State<MyRecipe> {
       itemCount: allFilterList.length,
       itemBuilder: (context, index) {
         return ListTile(
-          title: RecipeCard(title: allFilterList[index]["name"],desc: " "),
+          title: RecipeCard(id:allFilterList[index]["id"],title: allFilterList[index]["name"],desc: " "),
         );
       },
     )

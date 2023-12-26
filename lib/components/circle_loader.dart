@@ -18,8 +18,9 @@ class CircleLoader {
         context: context,
         builder: (_) {
           return AlertDialog(
-            shadowColor:Colors.transparent,
+            surfaceTintColor: Colors.transparent,
             contentPadding: EdgeInsets.zero,
+            shadowColor: Colors.transparent,
             backgroundColor: Colors.transparent,
             content: Row(
               mainAxisAlignment: MainAxisAlignment.center,

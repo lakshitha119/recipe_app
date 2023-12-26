@@ -29,8 +29,10 @@ class _BuildMealState extends State<BuildMeal> {
   int touchedIndex = -1;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   var selectedName;
+  var _isDisable = false;
   var selectedId;
   var mealType = "Breakfast";
+
   // var isWebView = false;
 
   var recipeList = [];
@@ -38,6 +40,7 @@ class _BuildMealState extends State<BuildMeal> {
   static const yellow = Color(0xfffeb703);
   static const blue = Color.fromARGB(255, 0, 23, 147);
   List<RecipeData> allFilterList = [];
+
   @override
   void initState() {
     // TODO: implement initState
@@ -74,49 +77,61 @@ class _BuildMealState extends State<BuildMeal> {
     });
   }
 
-
   fetchSuggestions() async {
     Timer.run(() {
       CircleLoader.showCustomDialog(context);
     });
-      allFilterList = [];
-      final value = await APIManager().getRequest(
-          Constant.domain + "/api/v1/Recipe/GetByUserName/1");
-      if (value != null && value['results'] != null) {
-          CircleLoader.hideLoader(context);
-        if (value['results'] != 0) {
-          for (var item in value['results']) {
-            allFilterList.add(RecipeData(
-                id: item['id'] as String,
-                name: item['name'] as String));
-          }
-          setState(() {
-            allFilterList = allFilterList;
-          });
-        } else {
+    allFilterList = [];
+    final value = await APIManager()
+        .getRequest(Constant.domain + "/api/v1/Recipe/GetByUserName/1");
+    if (value != null && value['results'] != null) {
+      CircleLoader.hideLoader(context);
+      if (value['results'] != 0) {
+        for (var item in value['results']) {
+          allFilterList.add(RecipeData(
+              id: item['id'] as String, name: item['name'] as String));
         }
-      }
+        setState(() {
+          allFilterList = allFilterList;
+        });
+      } else {}
+    }
   }
 
-  saveMeal() async{
+  saveMeal() async {
+    setState(() {
+      _isDisable = true;
+    });
     var data = {
-      "mealType": mealType=="Breakfast" ? 0 : mealType=="Lunch" ? 1 : 2,
+      "mealType": mealType == "Breakfast"
+          ? 0
+          : mealType == "Lunch"
+              ? 1
+              : 2,
       "mealDate": _dateController.text,
       "description": "none",
       "recipies": recipeList,
       "userId": "1"
     };
-    
-    APIManager().postRequest(Constant.domain+"/api/Meals", data).then((res){
-      if(res["isSucess"]){
+
+    APIManager().postRequest(Constant.domain + "/api/Meals", data).then((res) {
+      setState(() {
+        _isDisable = false;
+      });
+      if (res["isSucess"]) {
         MyToast.showSuccess("Meal Added");
-      }else{
+      } else {
         MyToast.showError("Failed to add meal");
-
       }
-
     });
-    
+  }
+
+
+  List<RecipeData> getSuggestions(String query) {
+    List<RecipeData> matches = [];
+    matches.addAll(allFilterList);
+    matches.retainWhere((s) => s.name.toLowerCase().contains(query.toLowerCase()));
+    return matches;
   }
 
   @override
@@ -221,38 +236,24 @@ class _BuildMealState extends State<BuildMeal> {
                     ),
                   ),
 
-                  //SizedBox(height: 10.0,),
-                  // Padding(
-                  //     padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
-                  //     child: DropdownWidget(
-                  //       onChanged: (val){
-                  //         print(val);
-                  //       },title: "Meal Type",items: ["Op1","Op2","Op3","Op4"],selected: "Op1",)),
-                  // const SizedBox(
-                  //   height: 10.0,
-                  // ),
-
                   Text(
                     'Meal Type',
                     style: TextStyle(fontSize: 16),
                   ),
 
                   Padding(
-                      padding:
-                      const EdgeInsets.all(8),
+                      padding: const EdgeInsets.all(8),
                       child: DropdownWidget(
-                        onChanged: (val){
+                        onChanged: (val) {
                           setState(() {
                             mealType = val;
                           });
                         },
                         title: "Select Meal Type",
-                        items: const [
-                          "Breakfast" , "Lunch" , "Dinner"
-                        ],
+                        items: const ["Breakfast", "Lunch", "Dinner"],
                         selectedValue: mealType,
                       )),
- Text(
+                  Text(
                     'Search Recipe',
                     style: TextStyle(fontSize: 16),
                   ),
@@ -261,21 +262,17 @@ class _BuildMealState extends State<BuildMeal> {
                     padding: const EdgeInsets.all(0),
                     child: TypeAheadField<RecipeData>(
                       suggestionsCallback: (value) {
-                        print(value);
-                        return allFilterList;
+                        return getSuggestions(value);
                       },
-                      builder: (context, controller,
-                          focusNode) {
+                      builder: (context, controller, focusNode) {
                         return TextField(
                             controller: controller,
                             focusNode: focusNode,
                             autofocus: true,
                             decoration: const InputDecoration(
-                                border:
-                                OutlineInputBorder()));
+                                border: OutlineInputBorder()));
                       },
-                      itemBuilder:
-                          (context, foodData) {
+                      itemBuilder: (context, foodData) {
                         return ListTile(
                           title: Text(foodData.name),
                         );
@@ -284,17 +281,13 @@ class _BuildMealState extends State<BuildMeal> {
                         print("recipe");
                         print(recipe);
 
-                        recipeList.add(
-                          {"id": recipe.id}
-                        );
-                        selectedName = recipe.name+" \n";
+                        recipeList.add({"id": recipe.id});
+                        selectedName = recipe.name + " \n";
                         selectedId = recipe.id;
                         recipeNameCon.text += selectedName;
                       },
                     ),
                   ),
-
-
 
                   const Text(
                     'Selected Recipes',
@@ -323,7 +316,6 @@ class _BuildMealState extends State<BuildMeal> {
                       onPressed: () {
                         recipeNameCon.text = "";
                         recipeList.clear();
-
                       },
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.transparent, elevation: 0),
@@ -355,15 +347,14 @@ class _BuildMealState extends State<BuildMeal> {
                       borderRadius: BorderRadius.circular(10.0),
                     ),
                     child: ElevatedButton(
-                      onPressed: () {
-
-                        if(recipeList.length==0){
+                      onPressed: _isDisable? null : () {
+                        if (recipeList.length == 0) {
                           MyToast.showError("Please add a recipe");
-                        }else{
+                        } else {
+
                           saveMeal();
                         }
-
-                        },
+                      },
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.transparent, elevation: 0),
                       child: const Text(

@@ -10,17 +10,20 @@ import 'package:recipe_app/utils/constant.dart';
 import '../components/circle_loader.dart';
 import '../services/api.dart';
 
-class ViewRecipe extends StatefulWidget {
+class NutritionView extends StatefulWidget {
   final String title;
+  final String id;
   final String type;
 
-  const ViewRecipe({Key? key, required this.title, required this.type}) : super(key: key);
+  const NutritionView(
+      {Key? key, required this.title, required this.type, required this.id})
+      : super(key: key);
 
   @override
-  _ViewRecipeState createState() => _ViewRecipeState();
+  _NutritionViewState createState() => _NutritionViewState();
 }
 
-class _ViewRecipeState extends State<ViewRecipe> {
+class _NutritionViewState extends State<NutritionView> {
   List<dynamic> data = []; //ApiPass Body Data Holder
   String SelectedValueHolder = ""; //Dropdown Button Selected Value Holder
 
@@ -32,49 +35,77 @@ class _ViewRecipeState extends State<ViewRecipe> {
   void initState() {
     super.initState();
 
-
     loadNutritionData();
-
   }
 
   var nutritionList = [];
   List<Widget> nutritionListViews = [];
 
-  loadNutritionData(){
+  loadNutritionData() {
     Timer.run(() {
       CircleLoader.showCustomDialog(context);
     });
-    if(widget.type=="Meal"){
-
-
-    }else{
-      APIManager().getRequest(Constant.domain + "/api/v1/Recipe/65898aeed82b0fb262c0f8fe")
+    if (widget.type == "Meal") {
+      print("${Constant.domain}/api/Meals/${widget.id}");
+      APIManager()
+          .getRequest("${Constant.domain}/api/Meals/${widget.id}")
           .then((res) {
-            CircleLoader.hideLoader(context);
+        CircleLoader.hideLoader(context);
 
-            var nutritionList = res["results"]["ingredients"][0]["nutritions"];
+        var totalNuritionList = res["results"]["totalNuritions"];
 
-            if(nutritionList==null){
-            }else{
-
-
-              if (nutritionList.length != 0) {
-                for (var item in nutritionList) {
-                  var amount = item["amount"].toString();
-                  setState(() {
-                    nutritionListViews.add(NutritionRow(title: item["name"]+" "+amount + item["unitName"], amount: amount));
-                    // nutritionList = nutritionList;
-                  });
-                }
-              }
-
-
-
+        if (totalNuritionList != null) {
+          if (totalNuritionList.length != 0) {
+            for (var item in totalNuritionList) {
+              var amount = item["amount"].toString();
+              setState(() {
+                nutritionListViews.add(NutritionRow(
+                    title: item["name"] + " " + amount + item["unitName"],
+                    amount: amount));
+                // nutritionList = nutritionList;
+              });
             }
+          }
+        } else {}
+      });
+    } else {
+      APIManager()
+          .getRequest(Constant.domain + "/api/v1/Recipe/" + widget.id)
+          .then((res) {
+        CircleLoader.hideLoader(context);
 
+        var ingredientList = res["results"]["ingredients"];
+
+        if (ingredientList != null) {
+          print("ingredientListingredientList");
+          print(ingredientList);
+          for (var ing in ingredientList) {
+            var nutritionList = ing["nutritions"];
+            if (ing["name"] != null) {
+              nutritionListViews.add(Padding(
+                  padding: const EdgeInsets.only(bottom: 0, top: 10),
+                  child: Text(ing["name"].toString(),
+                      softWrap: true,
+                      style: TextStyle(
+                          fontSize: 18.0, fontWeight: FontWeight.w800))));
+              if (nutritionList != null) {
+                if (nutritionList.length != 0) {
+                  for (var item in nutritionList) {
+                    var amount = item["amount"].toString();
+                    setState(() {
+                      nutritionListViews.add(NutritionRow(
+                          title: item["name"] + " " + amount + item["unitName"],
+                          amount: amount));
+                      // nutritionList = nutritionList;
+                    });
+                  }
+                }
+              } else {}
+            }
+          }
+        } else {}
       });
     }
-
   }
 
   @override
@@ -119,7 +150,7 @@ class _ViewRecipeState extends State<ViewRecipe> {
                   ),
                 ],
               ),
-              child:  Column(
+              child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -163,9 +194,11 @@ class _ViewRecipeState extends State<ViewRecipe> {
                               fontSize: 20.0, fontWeight: FontWeight.bold)),
                     ],
                   ),
-                  Column(children: nutritionListViews,)
-
-
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: nutritionListViews,
+                  )
                 ],
               ))),
     );
