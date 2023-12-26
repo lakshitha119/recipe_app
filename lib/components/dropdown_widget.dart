@@ -14,7 +14,13 @@ class DropdownWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DropdownButton<String>(
+    return
+      Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(title),
+      DropdownButton<String>(
       value: selectedValue,
       onChanged: (String? newValue) {
         if (newValue != null) {
@@ -28,6 +34,7 @@ class DropdownWidget extends StatelessWidget {
           child: Text(value),
         );
       }).toList(),
-    );
+    )],
+      );
   }
 }

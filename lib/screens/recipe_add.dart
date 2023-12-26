@@ -28,6 +28,8 @@ class _RecipeAddState extends State<RecipeAdd> {
   String selectedIngName = ""; //Dropdown Button Selected Value Holder
   int selectedIngId = 0; //Dropdown Button Selected Value Holder
   String selectedMeasurement = "G"; //Dropdown Button Selected Value Holder
+  String selectedAmount = "1"; //Dropdown Button Selected Value Holder
+  String selectedNoOfServ = "1"; //Dropdown Button Selected Value Holder
   int selectedId = 0; //Dropdown Button Selected Value Holder
 
   final _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -38,7 +40,6 @@ class _RecipeAddState extends State<RecipeAdd> {
   TextEditingController _ingAmountCon = TextEditingController();
   TextEditingController _recipeNameCon = TextEditingController();
   TextEditingController _recipeIngCon = TextEditingController();
-  TextEditingController _recipeNumOfServCon = TextEditingController();
   List<FoodData> allFilterList = [];
   var ingredients = [];
   var _isDisable = false;
@@ -48,7 +49,6 @@ class _RecipeAddState extends State<RecipeAdd> {
     super.initState();
 
     _recipeIngCon.text = "";
-    _recipeNumOfServCon.text = "1";
     _ingAmountCon.text = "1";
     ingredients = [];
   }
@@ -108,7 +108,7 @@ class _RecipeAddState extends State<RecipeAdd> {
       "description": "none",
       "ingredients": ingredients,
       "userId": "1",
-      "servesFor": _recipeNumOfServCon.text
+      "servesFor": selectedNoOfServ
     };
     await APIManager()
         .postRequest(Constant.domain + "/api/v1/Recipe", data)
@@ -216,10 +216,12 @@ class _RecipeAddState extends State<RecipeAdd> {
                                       Form(
                                         key: _formKey,
                                         child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          crossAxisAlignment: CrossAxisAlignment.center,
                                           mainAxisSize: MainAxisSize.min,
                                           children: <Widget>[
                                             Padding(
-                                              padding: const EdgeInsets.all(5),
+                                              padding: const EdgeInsets.all(0),
                                               child: TypeAheadField<FoodData>(
                                                 suggestionsCallback: (value) {
                                                   print(value);
@@ -252,19 +254,28 @@ class _RecipeAddState extends State<RecipeAdd> {
                                                 },
                                               ),
                                             ),
-                                            Text(selectedIngName),
+                                            Text(selectedIngName,style: TextStyle(fontWeight: FontWeight.w800),),
                                             Padding(
-                                              padding: const EdgeInsets.all(5),
-                                              child: TextField(
-                                                  controller: _ingAmountCon,
-                                                  keyboardType: TextInputType
-                                                      .number,
-                                                  autofocus: true,
-                                                  decoration:
-                                                      const InputDecoration(
-                                                          border:
-                                                              OutlineInputBorder(),
-                                                          labelText: 'Amount')),
+                                              padding: const EdgeInsets.all(0),
+                                              child: DropdownWidget(
+                                                onChanged: (val) {
+                                                  setState(() {
+                                                    selectedAmount = val;
+                                                  });
+                                                },
+                                                title: "Select Amount",
+                                                items: const [
+                                                  "1",
+                                                  "2",
+                                                  "3",
+                                                  "4",
+                                                  "5",
+                                                  "6",
+                                                  "7"
+                                                ],
+                                                selectedValue:
+                                                selectedAmount,
+                                              ),
                                             ),
                                             Padding(
                                                 padding:
@@ -354,14 +365,29 @@ class _RecipeAddState extends State<RecipeAdd> {
                     style: TextStyle(fontSize: 16),
                   ),
 
-                  TextField(
-                    keyboardType: TextInputType.number,
-                    controller: _recipeNumOfServCon,
-                    maxLines: null, // Set maxLines to null for multiline input
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10),
+                    child:
+
+                  DropdownWidget(
+                    onChanged: (val) {
+                      setState(() {
+                        selectedNoOfServ = val;
+                      });
+                    },
+                    title: "",
+                    items: const [
+                      "1",
+                      "2",
+                      "3",
+                      "4",
+                      "5",
+                      "6",
+                      "7"
+                    ],
+                    selectedValue:
+                    selectedNoOfServ,
+                  ),),
                   const SizedBox(
                     height: 5,
                   ),
@@ -370,12 +396,24 @@ class _RecipeAddState extends State<RecipeAdd> {
                     style: TextStyle(fontSize: 16),
                   ),
 
-                  const TextField(
-                    maxLines: null, // Set maxLines to null for multiline input
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
+              Padding(
+                padding: const EdgeInsets.only(left: 10),
+                child:DropdownWidget(
+                    onChanged: (val) {
+                    },
+                    title: "",
+                    items: const [
+                      "G",
+                      "KG",
+                      "ML",
+                      "L",
+                      "Cup",
+                      "tbl spoon",
+                      "t spoon"
+                    ],
+                    selectedValue:
+                    selectedMeasurement,
+                  )),
                   const SizedBox(
                     height: 20,
                   ),
