@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:recipe_app/components/recipe_card.dart';
+import 'package:recipe_app/screens/build_meal.dart';
 import 'package:recipe_app/screens/nutrition_view.dart';
 
 import '../components/circle_loader.dart';
@@ -11,9 +12,7 @@ import '../components/meal_card.dart';
 import '../services/api.dart';
 import '../utils/constant.dart';
 
-
 class MyMeal extends StatefulWidget {
-
   const MyMeal({Key? key}) : super(key: key);
 
   @override
@@ -37,20 +36,18 @@ class _MyMealState extends State<MyMeal> {
 
   var allFilterList = [];
 
-  loadData() async{
+  loadData() async {
     Timer.run(() {
       CircleLoader.showCustomDialog(context);
     });
     allFilterList = [];
 
-    final value = await APIManager().getRequest(
-        Constant.domain + "/api/Meals/GetByUserName/1");
+    final value = await APIManager()
+        .getRequest(Constant.domain + "/api/Meals/GetByUserName/Lakshitha119");
     if (value != null && value['results'] != null) {
-
       CircleLoader.hideLoader(context);
 
       if (value['results'] != 0) {
-
         setState(() {
           allFilterList = value['results'];
         });
@@ -86,16 +83,28 @@ class _MyMealState extends State<MyMeal> {
         ),
         backgroundColor: Color.fromARGB(255, 0, 23, 147),
       ),
-      body:
-
-      ListView.builder(
+      body: ListView.builder(
         itemCount: allFilterList.length,
         itemBuilder: (context, index) {
           return ListTile(
-            title: MealCard(id:allFilterList[index]["id"],title: allFilterList[index]["name"],desc: allFilterList[index]["mealType"]),
+            title: MealCard(
+                id: allFilterList[index]["id"],
+                title: allFilterList[index]["name"],
+                desc: allFilterList[index]["mealType"]),
           );
         },
-      )
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          // Add your action here
+          final result = await Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => const BuildMeal()));
+          if(result){
+            loadData();
+          }
+        },
+        child: Icon(Icons.add),
+      ),
     );
   }
 }

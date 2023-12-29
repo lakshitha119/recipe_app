@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:recipe_app/screens/build_meal.dart';
 import 'package:recipe_app/screens/my_meal.dart';
+import 'package:recipe_app/screens/search_query.dart';
 import '../screens/bar_chart_sample2.dart';
 import '../screens/home.dart';
 import '../screens/my_recipe.dart';
@@ -9,6 +10,7 @@ import '../screens/pie.dart';
 import '../screens/recipe_add.dart';
 
 class BottomTabBar extends StatefulWidget {
+
   BottomTabBar({Key? key}) : super(key: key);
 
   @override
@@ -36,12 +38,13 @@ class _BottomTabBarState extends State<BottomTabBar> {
                 _currentIndex = index;
               });
             },
-            children: const [
+            children:  [
               Home(),
-              RecipeAdd(),
+              // RecipeAdd(),
               MyRecipe(),
               MyMeal(),
-              BuildMeal(),
+              SearchQuery()
+              // BuildMeal(),
             ]),
         bottomNavigationBar: BottomNavigationBar(
             selectedItemColor: Color.fromARGB(255, 246, 197, 0),
@@ -64,13 +67,13 @@ class _BottomTabBarState extends State<BottomTabBar> {
                       size: 20, color: Color.fromARGB(255, 246, 197, 0)),
                   label: 'Home',
                   backgroundColor: Color.fromARGB(255, 0, 11, 75)),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.newspaper_rounded,
-                      size: 20, color: Color.fromARGB(255, 255, 255, 255)),
-                  activeIcon: Icon(Icons.newspaper_rounded,
-                      size: 20, color: Color.fromARGB(255, 246, 197, 0)),
-                  label: 'Add Recipe',
-                  backgroundColor: Color.fromARGB(255, 0, 11, 75)),
+              // BottomNavigationBarItem(
+              //     icon: Icon(Icons.newspaper_rounded,
+              //         size: 20, color: Color.fromARGB(255, 255, 255, 255)),
+              //     activeIcon: Icon(Icons.newspaper_rounded,
+              //         size: 20, color: Color.fromARGB(255, 246, 197, 0)),
+              //     label: 'Add Recipe',
+              //     backgroundColor: Color.fromARGB(255, 0, 11, 75)),
               BottomNavigationBarItem(
                   icon: Icon(Icons.food_bank,
                       size: 20, color: Color.fromARGB(255, 255, 255, 255)),
@@ -90,7 +93,7 @@ class _BottomTabBarState extends State<BottomTabBar> {
                       size: 20, color: Color.fromARGB(255, 255, 255, 255)),
                   activeIcon: Icon(Icons.build,
                       size: 20, color: Color.fromARGB(255, 246, 197, 0)),
-                  label: 'Build Meal',
+                  label: 'Search Query',
                   backgroundColor: Color.fromARGB(255, 0, 11, 75))
             ]));
   }

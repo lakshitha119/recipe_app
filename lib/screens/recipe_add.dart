@@ -107,7 +107,7 @@ class _RecipeAddState extends State<RecipeAdd> {
       "name": _recipeNameCon.text,
       "description": "none",
       "ingredients": ingredients,
-      "userId": "1",
+      "userId": "Lakshitha119",
       "servesFor": selectedNoOfServ
     };
     await APIManager()
@@ -120,6 +120,7 @@ class _RecipeAddState extends State<RecipeAdd> {
       });
       if (res["isSucess"]) {
         MyToast.showSuccess("Recipe Added");
+        Navigator.pop(context,true);
       } else {
         MyToast.showError("Failed to add recipe");
       }

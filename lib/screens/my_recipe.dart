@@ -5,14 +5,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:recipe_app/components/recipe_card.dart';
 import 'package:recipe_app/screens/nutrition_view.dart';
+import 'package:recipe_app/screens/recipe_add.dart';
 
 import '../components/circle_loader.dart';
 import '../services/api.dart';
 import '../utils/constant.dart';
 
-
 class MyRecipe extends StatefulWidget {
-
   const MyRecipe({Key? key}) : super(key: key);
 
   @override
@@ -36,20 +35,18 @@ class _MyRecipeState extends State<MyRecipe> {
 
   var allFilterList = [];
 
-  loadData() async{
+  loadData() async {
     Timer.run(() {
       CircleLoader.showCustomDialog(context);
     });
     allFilterList = [];
 
-    final value = await APIManager().getRequest(
-        Constant.domain + "/api/v1/Recipe/GetByUserName/1");
+    final value = await APIManager()
+        .getRequest(Constant.domain + "/api/v1/Recipe/GetByUserName/Lakshitha119");
     if (value != null && value['results'] != null) {
-
-        CircleLoader.hideLoader(context);
+      CircleLoader.hideLoader(context);
 
       if (value['results'] != 0) {
-
         setState(() {
           allFilterList = value['results'];
         });
@@ -85,24 +82,28 @@ class _MyRecipeState extends State<MyRecipe> {
         ),
         backgroundColor: Color.fromARGB(255, 0, 23, 147),
       ),
-      body:
-    ListView.builder(
-      itemCount: allFilterList.length,
-      itemBuilder: (context, index) {
-        return ListTile(
-          title: RecipeCard(id:allFilterList[index]["id"],title: allFilterList[index]["name"],desc: " "),
-        );
-      },
-    )
-    // Column(children: [
-    //   RecipeCard(title: "Dhal Curry",desc: " ",onClick: (){
-    //       Navigator.of(context)
-    //           .push(MaterialPageRoute(builder: (context) => const ViewRecipe(title: "Hello",)));
-    //     },),
-    //   RecipeCard(title: "Fish Curry",desc: " ",),
-    //   ],)
-
-
+      body: ListView.builder(
+        itemCount: allFilterList.length,
+        itemBuilder: (context, index) {
+          return ListTile(
+            title: RecipeCard(
+                id: allFilterList[index]["id"],
+                title: allFilterList[index]["name"],
+                desc: " "),
+          );
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          // Add your action here
+          final result = await Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => const RecipeAdd()));
+          if(result){
+            loadData();
+          }
+        },
+        child: Icon(Icons.add),
+      ),
     );
   }
 }

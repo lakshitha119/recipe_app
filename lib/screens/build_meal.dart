@@ -83,7 +83,7 @@ class _BuildMealState extends State<BuildMeal> {
     });
     allFilterList = [];
     final value = await APIManager()
-        .getRequest(Constant.domain + "/api/v1/Recipe/GetByUserName/1");
+        .getRequest(Constant.domain + "/api/v1/Recipe/GetByUserName/Lakshitha119");
     if (value != null && value['results'] != null) {
       CircleLoader.hideLoader(context);
       if (value['results'] != 0) {
@@ -111,7 +111,7 @@ class _BuildMealState extends State<BuildMeal> {
       "mealDate": _dateController.text,
       "description": "none",
       "recipies": recipeList,
-      "userId": "1"
+      "userId": "Lakshitha119"
     };
 
     APIManager().postRequest(Constant.domain + "/api/Meals", data).then((res) {
@@ -120,6 +120,7 @@ class _BuildMealState extends State<BuildMeal> {
       });
       if (res["isSucess"]) {
         MyToast.showSuccess("Meal Added");
+        Navigator.pop(context,true);
       } else {
         MyToast.showError("Failed to add meal");
       }
@@ -236,7 +237,7 @@ class _BuildMealState extends State<BuildMeal> {
                     ),
                   ),
 
-                  Text(
+                  const Text(
                     'Meal Type',
                     style: TextStyle(fontSize: 16),
                   ),

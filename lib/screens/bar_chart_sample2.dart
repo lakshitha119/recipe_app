@@ -1,14 +1,20 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:recipe_app/components/circle_loader.dart';
+import 'package:recipe_app/services/api.dart';
 
 import '../utils/app_colors.dart';
+import '../utils/constant.dart';
 
 class BarChartSample2 extends StatefulWidget {
-  BarChartSample2({super.key});
+  BarChartSample2({
+    super.key,
+  });
+
   final Color leftBarColor = AppColors.contentColorYellow;
   final Color rightBarColor = AppColors.contentColorRed;
-  final Color avgColor =
-      AppColors.contentColorOrange;
+  final Color avgColor = AppColors.contentColorOrange;
+
   @override
   State<StatefulWidget> createState() => BarChartSample2State();
 }
@@ -16,35 +22,63 @@ class BarChartSample2 extends StatefulWidget {
 class BarChartSample2State extends State<BarChartSample2> {
   final double width = 7;
 
-  late List<BarChartGroupData> rawBarGroups;
-  late List<BarChartGroupData> showingBarGroups;
+  // late List<BarChartGroupData> rawBarGroups;
+  var showingBarGroups;
 
   int touchedGroupIndex = -1;
 
   @override
   void initState() {
     super.initState();
-    final barGroup1 = makeGroupData(0, 5, 12);
-    final barGroup2 = makeGroupData(1, 16, 12);
-    final barGroup3 = makeGroupData(2, 18, 5);
-    final barGroup4 = makeGroupData(3, 20, 16);
-    final barGroup5 = makeGroupData(4, 17, 6);
-    final barGroup6 = makeGroupData(5, 19, 1.5);
-    final barGroup7 = makeGroupData(6, 10, 1.5);
 
-    final items = [
-      barGroup1,
-      barGroup2,
-      barGroup3,
-      barGroup4,
-      barGroup5,
-      barGroup6,
-      barGroup7,
-    ];
+    // _startDateController.text = DateTime.now().toString().split(" ")[0];
+    // DateTime sixDaysAgo = DateTime.now().subtract(const Duration(days: 6));
+    // fetchDataAndBuildChart(sixDaysAgo.toString().split(" ")[0],DateTime.now().toString().split(" ")[0]);
+  }
 
-    rawBarGroups = items;
+  var dateDataList = [];
 
-    showingBarGroups = rawBarGroups;
+  var titles = [];
+
+  Future<void> fetchDataAndBuildChart(List data) async {
+    titles = [];
+
+    dateDataList = data;
+
+    final List<BarChartGroupData> barGroups =
+        List.generate(dateDataList.length, (index) {
+      titles.add(dateDataList[index]["date"]
+          .toString()
+          .split("T")[0]
+          .replaceAll("2023-", ""));
+      List<BarChartRodData> barList = [];
+      if (dateDataList[index]["nutrients"].length != 0) {
+        barList = [];
+        for (var nItem in dateDataList[index]["nutrients"]) {
+          var amo = double.parse(nItem["amount"].toString()) / 5;
+          print(amo);
+          barList.add(BarChartRodData(
+            toY: double.parse(nItem["amount"].toString()) / 5,
+            color: widget.leftBarColor,
+            width: width,
+          ));
+        }
+        return BarChartGroupData(
+          barsSpace: 4,
+          x: index,
+          barRods: barList,
+        );
+      } else {
+        return makeGroupData(index, 0, 0);
+      }
+    });
+
+    setState(() {
+      // rawBarGroups = barGroups;
+      showingBarGroups = List.of(barGroups);
+    });
+
+    CircleLoader.hideLoader(context);
   }
 
   @override
@@ -52,83 +86,48 @@ class BarChartSample2State extends State<BarChartSample2> {
     return AspectRatio(
       aspectRatio: 1,
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(8),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                makeTransactionsIcon(),
-                const SizedBox(
-                  width: 38,
-                ),
-                const Text(
-                  'Transactions',
-                  style: TextStyle(color: Colors.white, fontSize: 22),
-                ),
-                const SizedBox(
-                  width: 4,
-                ),
-                const Text(
-                  'state',
-                  style: TextStyle(color: Color(0xff77839a), fontSize: 16),
-                ),
-              ],
-            ),
-            const SizedBox(
-              height: 38,
-            ),
+            // Row(
+            //   crossAxisAlignment: CrossAxisAlignment.center,
+            //   mainAxisAlignment: MainAxisAlignment.center,
+            //   mainAxisSize: MainAxisSize.min,
+            //   children: <Widget>[
+            //     makeTransactionsIcon(),
+            //     const SizedBox(
+            //       width: 38,
+            //     ),
+            //     const Text(
+            //       'Date Wise Chart',
+            //       style: TextStyle(color: Colors.black, fontSize: 14),
+            //     ),
+            //   ],
+            // ),
             Expanded(
               child: BarChart(
                 BarChartData(
-                  maxY: 20,
+                  maxY: 100,
                   barTouchData: BarTouchData(
                     touchTooltipData: BarTouchTooltipData(
-                      tooltipBgColor: Colors.grey,
-                      getTooltipItem: (a, b, c, d) => null,
+                      tooltipBgColor: Colors.pink,
+                      getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                        // String tooltipText = 'Y:${rodIndex} ${groupIndex}';
+                        var data =
+                            dateDataList[groupIndex]["nutrients"][rodIndex];
+                        String tooltipText =
+                            data["name"] + " - " + data["amount"].toString();
+
+                        return BarTooltipItem(
+                          tooltipText,
+                          const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        );
+                      },
                     ),
-                    touchCallback: (FlTouchEvent event, response) {
-                      if (response == null || response.spot == null) {
-                        setState(() {
-                          touchedGroupIndex = -1;
-                          showingBarGroups = List.of(rawBarGroups);
-                        });
-                        return;
-                      }
-
-                      touchedGroupIndex = response.spot!.touchedBarGroupIndex;
-
-                      setState(() {
-                        if (!event.isInterestedForInteractions) {
-                          touchedGroupIndex = -1;
-                          showingBarGroups = List.of(rawBarGroups);
-                          return;
-                        }
-                        showingBarGroups = List.of(rawBarGroups);
-                        if (touchedGroupIndex != -1) {
-                          var sum = 0.0;
-                          for (final rod
-                              in showingBarGroups[touchedGroupIndex].barRods) {
-                            sum += rod.toY;
-                          }
-                          final avg = sum /
-                              showingBarGroups[touchedGroupIndex]
-                                  .barRods
-                                  .length;
-
-                          showingBarGroups[touchedGroupIndex] =
-                              showingBarGroups[touchedGroupIndex].copyWith(
-                            barRods: showingBarGroups[touchedGroupIndex]
-                                .barRods
-                                .map((rod) {
-                              return rod.copyWith(
-                                  toY: avg, color: widget.avgColor);
-                            }).toList(),
-                          );
-                        }
-                      });
-                    },
                   ),
                   titlesData: FlTitlesData(
                     show: true,
@@ -179,11 +178,11 @@ class BarChartSample2State extends State<BarChartSample2> {
     );
     String text;
     if (value == 0) {
-      text = '1K';
-    } else if (value == 10) {
-      text = '5K';
-    } else if (value == 19) {
-      text = '10K';
+      text = 'L';
+    } else if (value == 25) {
+      text = 'M';
+    } else if (value == 50) {
+      text = 'H';
     } else {
       return Container();
     }
@@ -195,14 +194,14 @@ class BarChartSample2State extends State<BarChartSample2> {
   }
 
   Widget bottomTitles(double value, TitleMeta meta) {
-    final titles = <String>['Mn', 'Te', 'Wd', 'Tu', 'Fr', 'St', 'Su'];
+    // final titles = <String>['Mn', 'Te', 'Wd', 'Tu', 'Fr', 'St', 'Su'];
 
     final Widget text = Text(
       titles[value.toInt()],
       style: const TextStyle(
         color: Color(0xff7589a2),
         fontWeight: FontWeight.bold,
-        fontSize: 14,
+        fontSize: 12,
       ),
     );
 
@@ -222,58 +221,6 @@ class BarChartSample2State extends State<BarChartSample2> {
           toY: y1,
           color: widget.leftBarColor,
           width: width,
-        ),
-        BarChartRodData(
-          toY: y2,
-          color: widget.rightBarColor,
-          width: width,
-        ),
-      ],
-    );
-  }
-
-  Widget makeTransactionsIcon() {
-    const width = 4.5;
-    const space = 3.5;
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        Container(
-          width: width,
-          height: 10,
-          color: Colors.white.withOpacity(0.4),
-        ),
-        const SizedBox(
-          width: space,
-        ),
-        Container(
-          width: width,
-          height: 28,
-          color: Colors.white.withOpacity(0.8),
-        ),
-        const SizedBox(
-          width: space,
-        ),
-        Container(
-          width: width,
-          height: 42,
-          color: Colors.white.withOpacity(1),
-        ),
-        const SizedBox(
-          width: space,
-        ),
-        Container(
-          width: width,
-          height: 28,
-          color: Colors.white.withOpacity(0.8),
-        ),
-        const SizedBox(
-          width: space,
-        ),
-        Container(
-          width: width,
-          height: 10,
-          color: Colors.white.withOpacity(0.4),
         ),
       ],
     );

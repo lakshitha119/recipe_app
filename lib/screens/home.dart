@@ -1,5 +1,12 @@
+import 'dart:async';
+import 'dart:math';
+
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:recipe_app/services/api.dart';
+import 'package:recipe_app/utils/constant.dart';
+import 'package:recipe_app/utils/toast.dart';
+import '../components/circle_loader.dart';
 import '../components/custom_button.dart';
 import '../components/rounded_clickable_icon.dart';
 import 'package:intl/intl.dart';
@@ -9,16 +16,21 @@ import '../utils/indicator.dart';
 import 'bar_chart_sample2.dart';
 
 class Home extends StatefulWidget {
-  const Home({Key? key}) : super(key: key);
+  const Home({Key? key,}) : super(key: key);
 
   @override
   _HomeState createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
-  final TextEditingController _textEditingController =
+
+  final GlobalKey<BarChartSample2State> _barChartSample2Key =
+  GlobalKey<BarChartSample2State>();
+
+
+  final TextEditingController _startDateController =
       TextEditingController(); //Text of TextField
-  final TextEditingController _textEditingController1 =
+  final TextEditingController _endDateController1 =
       TextEditingController(); //Text of TextField
   List<dynamic> data = []; //ApiPass Body Data Holder
   String title = "Good Morning!";
@@ -39,7 +51,84 @@ class _HomeState extends State<Home> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    _endDateController1.text = DateTime.now().toString().split(" ")[0];
+    DateTime sixDaysAgo = DateTime.now().subtract(Duration(days: 6));
+    _startDateController.text = sixDaysAgo.toString().split(" ")[0];
     setTitle();
+
+    loadData();
+  }
+
+
+
+  Color generateRandomDarkColor() {
+    Random random = Random();
+    int red = random.nextInt(200); // Keep red component low
+    int green = random.nextInt(200); // Keep green component low
+    int blue = random.nextInt(200); // Keep blue component low
+
+    return Color.fromARGB(255, red, green, blue);
+  }
+  var dateDataList = [];
+  loadData() async{
+
+
+    DateTime date1 = DateTime.parse(_startDateController.text);
+    DateTime date2 = DateTime.parse(_endDateController1.text);
+
+    // Calculate the difference in days
+    int dateDifference = (date2.difference(date1).inDays).abs();
+
+    // Check if the difference is 6 days
+    if (dateDifference != 6) {
+      MyToast.showError("Please select a date range equal to 7 days.");
+      return;
+    }
+
+    Timer.run(() {
+      CircleLoader.showCustomDialog(context);
+    });
+
+
+    APIManager().getRequest(Constant.domain+"/api/Dashboard?userName=Lakshitha119&startDate="+_startDateController.text+"&endDate="+_endDateController1.text).then((res){
+
+      var pieChart = res["results"]["totalNutritions"];
+
+      _barChartSample2Key.currentState?.fetchDataAndBuildChart(res["results"]["dateWiseNutritions"]);
+      indicatorList=[];
+      dataList=[];
+      for(var pieChartItem in pieChart) {
+        var color = generateRandomDarkColor();
+        setState(() {
+          indicatorList.add(Container(
+            width: Constant.getWidthPartial(context, 80),
+            height: 20.0,
+            child: Indicator(
+                  color: color,
+                  text: pieChartItem["name"],
+                  isSquare: false,
+                  size: touchedIndex == 0 ? 18 : 16,
+                  textColor: touchedIndex == 0
+                      ? AppColors.mainTextColor1
+                      : AppColors.mainTextColor3,
+                )));
+          dataList.add(PieChartSectionData(
+            color: color,
+            value:  double.parse(pieChartItem["amount"].toString()),
+            title: '',
+            radius: 65,
+            titlePositionPercentageOffset: 0.1,
+            borderSide: false
+                ? const BorderSide(
+                color: AppColors.contentColorWhite, width: 6)
+                : BorderSide(
+                color: AppColors.contentColorWhite.withOpacity(0)),
+          ));
+        });
+      }
+
+    });
+
   }
 
   void _ShowDatePicker(textEditingController) {
@@ -89,75 +178,9 @@ class _HomeState extends State<Home> {
     }
   }
 
-  List<PieChartSectionData> showingSections() {
-    return List.generate(
-      4,
-      (i) {
-        final isTouched = i == touchedIndex;
-        const color0 = AppColors.contentColorBlue;
-        const color1 = AppColors.contentColorYellow;
-        const color2 = AppColors.contentColorPink;
-        const color3 = AppColors.contentColorGreen;
+  List<PieChartSectionData> dataList = [];
+  List<Widget> indicatorList = [];
 
-        switch (i) {
-          case 0:
-            return PieChartSectionData(
-              color: color0,
-              value: 10,
-              title: '',
-              radius: 65,
-              titlePositionPercentageOffset: 0.55,
-              borderSide: isTouched
-                  ? const BorderSide(
-                      color: AppColors.contentColorWhite, width: 6)
-                  : BorderSide(
-                      color: AppColors.contentColorWhite.withOpacity(0)),
-            );
-          case 1:
-            return PieChartSectionData(
-              color: color1,
-              value: 25,
-              title: '',
-              radius: 65,
-              titlePositionPercentageOffset: 0.55,
-              borderSide: isTouched
-                  ? const BorderSide(
-                      color: AppColors.contentColorWhite, width: 6)
-                  : BorderSide(
-                      color: AppColors.contentColorWhite.withOpacity(0)),
-            );
-          case 2:
-            return PieChartSectionData(
-              color: color2,
-              value: 25,
-              title: '',
-              radius: 65,
-              titlePositionPercentageOffset: 0.6,
-              borderSide: isTouched
-                  ? const BorderSide(
-                      color: AppColors.contentColorWhite, width: 6)
-                  : BorderSide(
-                      color: AppColors.contentColorWhite.withOpacity(0)),
-            );
-          case 3:
-            return PieChartSectionData(
-              color: color3,
-              value: 25,
-              title: '',
-              radius: 65,
-              titlePositionPercentageOffset: 0.55,
-              borderSide: isTouched
-                  ? const BorderSide(
-                      color: AppColors.contentColorWhite, width: 6)
-                  : BorderSide(
-                      color: AppColors.contentColorWhite.withOpacity(0)),
-            );
-          default:
-            throw Error();
-        }
-      },
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -233,10 +256,10 @@ class _HomeState extends State<Home> {
                                   fontFamily: "Roboto",
                                   fontWeight: FontWeight.bold,
                                 ),
-                                controller: _textEditingController,
+                                controller: _startDateController,
                                 decoration: InputDecoration(
                                   suffixIcon: IconButton(
-                                    onPressed: _textEditingController.clear,
+                                    onPressed: _startDateController.clear,
                                     icon: const Icon(
                                       Icons.clear,
                                       color: blue,
@@ -276,7 +299,7 @@ class _HomeState extends State<Home> {
                                     color: Colors.white,
                                   ),
                                   onPressed: () {
-                                    _ShowDatePicker(_textEditingController);
+                                    _ShowDatePicker(_startDateController);
                                   }),
                             )
                           ],
@@ -294,10 +317,10 @@ class _HomeState extends State<Home> {
                                   fontFamily: "Roboto",
                                   fontWeight: FontWeight.bold,
                                 ),
-                                controller: _textEditingController1,
+                                controller: _endDateController1,
                                 decoration: InputDecoration(
                                   suffixIcon: IconButton(
-                                    onPressed: _textEditingController1.clear,
+                                    onPressed: _endDateController1.clear,
                                     icon: const Icon(
                                       Icons.clear,
                                       color: blue,
@@ -337,7 +360,7 @@ class _HomeState extends State<Home> {
                                     color: Colors.white,
                                   ),
                                   onPressed: () {
-                                    _ShowDatePicker(_textEditingController1);
+                                    _ShowDatePicker(_endDateController1);
                                   }),
                             )
                           ],
@@ -361,7 +384,9 @@ class _HomeState extends State<Home> {
                           borderRadius: BorderRadius.circular(10.0),
                         ),
                         child: ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            loadData();
+                          },
                           style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.transparent,
                               elevation: 0),
@@ -399,56 +424,16 @@ class _HomeState extends State<Home> {
               ),
               Column(
                 children: <Widget>[
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: <Widget>[
-                      Indicator(
-                        color: AppColors.contentColorBlue,
-                        text: 'One',
-                        isSquare: false,
-                        size: touchedIndex == 0 ? 18 : 16,
-                        textColor: touchedIndex == 0
-                            ? AppColors.mainTextColor1
-                            : AppColors.mainTextColor3,
-                      ),
-                      Indicator(
-                        color: AppColors.contentColorYellow,
-                        text: 'Two',
-                        isSquare: false,
-                        size: touchedIndex == 1 ? 18 : 16,
-                        textColor: touchedIndex == 1
-                            ? AppColors.mainTextColor1
-                            : AppColors.mainTextColor3,
-                      ),
-                      Indicator(
-                        color: AppColors.contentColorPink,
-                        text: 'Three',
-                        isSquare: false,
-                        size: touchedIndex == 2 ? 18 : 16,
-                        textColor: touchedIndex == 2
-                            ? AppColors.mainTextColor1
-                            : AppColors.mainTextColor3,
-                      ),
-                      Indicator(
-                        color: AppColors.contentColorGreen,
-                        text: 'Four',
-                        isSquare: false,
-                        size: touchedIndex == 3 ? 18 : 16,
-                        textColor: touchedIndex == 3
-                            ? AppColors.mainTextColor1
-                            : AppColors.mainTextColor3,
-                      ),
-                    ],
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: indicatorList,
                   ),
                   const SizedBox(
                     height: 1,
                   ),
-                  Container(
+                  SizedBox(
                     width: 500,
-                    height: 200,
+                    height: 150,
                     child: PieChart(
                       PieChartData(
                         pieTouchData: PieTouchData(
@@ -472,14 +457,20 @@ class _HomeState extends State<Home> {
                         ),
                         sectionsSpace: 2,
                         centerSpaceRadius: 0,
-                        sections: showingSections(),
+                        sections: dataList,
                       ),
                       swapAnimationDuration: const Duration(milliseconds: 800),
                       swapAnimationCurve: Curves.easeInOut,
-                      
+
                     ),
                   ),
-                  BarChartSample2(),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child:
+                    Container(
+                    width: 500,
+                  height: 500,
+                  child:BarChartSample2(key: _barChartSample2Key,))),
                 ],
               )
             ],

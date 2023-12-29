@@ -9,9 +9,7 @@ import 'package:recipe_app/screens/nutrition_view.dart';
 import '../components/circle_loader.dart';
 import '../components/meal_card.dart';
 
-
 class SearchQuery extends StatefulWidget {
-
   const SearchQuery({Key? key}) : super(key: key);
 
   @override
@@ -63,43 +61,53 @@ class _SearchQueryState extends State<SearchQuery> {
             ),
           ],
         ),
-        backgroundColor: Color.fromARGB(255, 0, 23, 147),
+        backgroundColor: const Color.fromARGB(255, 0, 23, 147),
       ),
-      body:  SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          child: Column(children: [
-
-            const Text(
-              'Search Query',
-              style: TextStyle(fontSize: 16),
-            ),
-
-            TextField(
-              enabled: false,
-              maxLines: 10, // Set maxLines to null for multiline input
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
+      body: const SingleChildScrollView(
+          physics: AlwaysScrollableScrollPhysics(),
+          child: Column(
+            children: [
+              Text(
+                'Previous Search Query',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
               ),
-            ),
-
-
-            Column(children: [
-              Row(children: [
-                const Text(
-                  'Food Name',
-                  style: TextStyle(fontSize: 16),
+              TextField(
+                enabled: false,
+                maxLines: 10, // Set maxLines to null for multiline input
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
                 ),
-                const Text(
-                  'N1',
-                  style: TextStyle(fontSize: 16),
-                ),
-                const Text(
-                  'N2',
-                  style: TextStyle(fontSize: 16),
-                ),
-              ],)
-            ],)
-          ],)),
+              ),
+              Column(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.all(8),
+                    child: Row(
+                      children: [
+                        Text(
+                          'Food Name',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w800),
+                        ),
+                        Spacer(),
+                        Text(
+                          'N1',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w800),
+                        ),
+                        Spacer(),
+                        Text(
+                          'N2',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w800),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              )
+            ],
+          )),
     );
   }
 }
