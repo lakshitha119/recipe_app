@@ -57,7 +57,7 @@ class _NutritionViewState extends State<NutritionView> {
         if (totalNuritionList != null) {
           if (totalNuritionList.length != 0) {
             for (var item in totalNuritionList) {
-              var amount = item["amount"].toString();
+              var amount = item["amount"].toStringAsFixed(2).toString();
               setState(() {
                 nutritionListViews.add(NutritionRow(
                     title: item["name"] + " " + amount + item["unitName"],
@@ -91,7 +91,7 @@ class _NutritionViewState extends State<NutritionView> {
               if (nutritionList != null) {
                 if (nutritionList.length != 0) {
                   for (var item in nutritionList) {
-                    var amount = item["amount"].toString();
+                    var amount = item["amount"].toStringAsFixed(2).toString();
                     setState(() {
                       nutritionListViews.add(NutritionRow(
                           title: item["name"] + " " + amount + item["unitName"],
