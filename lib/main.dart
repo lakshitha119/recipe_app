@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:recipe_app/screens/home.dart';
 
 import 'components/bottom_navbar.dart';
+import 'screens/login.dart';
 
 void main() {
   runApp(const MyApp());
@@ -35,7 +36,8 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home:  BottomTabBar(),
+      // home:  BottomTabBar(),
+      home: Login(),
     );
   }
 }
