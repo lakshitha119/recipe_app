@@ -133,8 +133,8 @@ class _RecipeAddState extends State<RecipeAdd> {
       key: _scaffoldKey,
       appBar: AppBar(
         centerTitle: false,
-        title: Row(
-          children: const [
+        title: const Row(
+          children: [
             SizedBox(
               width: 1,
             ),
@@ -150,7 +150,7 @@ class _RecipeAddState extends State<RecipeAdd> {
             ),
           ],
         ),
-        backgroundColor: Color.fromARGB(255, 0, 23, 147),
+        backgroundColor: const Color.fromARGB(255, 0, 23, 147),
       ),
       body: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),

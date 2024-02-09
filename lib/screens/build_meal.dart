@@ -2,12 +2,14 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:recipe_app/components/dropdown_widget_h.dart';
 import 'package:recipe_app/services/api.dart';
 import 'package:recipe_app/utils/constant.dart';
 import '../components/circle_loader.dart';
 import '../components/dropdown_widget.dart';
 import 'package:intl/intl.dart';
 
+import '../data/food_data.dart';
 import '../data/recipe_data.dart';
 import '../utils/toast.dart';
 
@@ -19,6 +21,9 @@ class BuildMeal extends StatefulWidget {
 }
 
 class _BuildMealState extends State<BuildMeal> {
+  final _formKey = GlobalKey<FormState>();
+
+  final TextEditingController _amountCon = TextEditingController();
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController recipeNameCon =
       TextEditingController(); //Text of TextField
@@ -28,11 +33,11 @@ class _BuildMealState extends State<BuildMeal> {
   String title = "Good Morning!";
   int touchedIndex = -1;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  var selectedName;
+  var selectedName = "";
   var _isDisable = false;
   var selectedId;
   var mealType = "Breakfast";
-
+  String selectedMeasurement = "G";
   // var isWebView = false;
 
   var recipeList = [];
@@ -118,6 +123,7 @@ class _BuildMealState extends State<BuildMeal> {
       setState(() {
         _isDisable = false;
       });
+      print(res);
       if (res["isSucess"]) {
         MyToast.showSuccess("Meal Added");
         Navigator.pop(context,true);
@@ -254,44 +260,169 @@ class _BuildMealState extends State<BuildMeal> {
                         items: const ["Breakfast", "Lunch", "Dinner"],
                         selectedValue: mealType,
                       )),
-                  Text(
-                    'Search Recipe',
-                    style: TextStyle(fontSize: 16),
-                  ),
 
-                  Padding(
-                    padding: const EdgeInsets.all(0),
-                    child: TypeAheadField<RecipeData>(
-                      suggestionsCallback: (value) {
-                        return getSuggestions(value);
-                      },
-                      builder: (context, controller, focusNode) {
-                        return TextField(
-                            controller: controller,
-                            focusNode: focusNode,
-                            autofocus: true,
-                            decoration: const InputDecoration(
-                                border: OutlineInputBorder()));
-                      },
-                      itemBuilder: (context, foodData) {
-                        return ListTile(
-                          title: Text(foodData.name),
-                        );
-                      },
-                      onSelected: (recipe) {
-                        print("recipe");
-                        print(recipe);
 
-                        recipeList.add({"id": recipe.id});
-                        selectedName = recipe.name + " \n";
-                        selectedId = recipe.id;
-                        recipeNameCon.text += selectedName;
+                  Container(
+                    width: MediaQuery.of(context).size.width / 100 * 100,
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [blue, Color.fromARGB(255, 4, 34, 193)],
+                        begin: Alignment.bottomCenter,
+                        end: Alignment.topCenter,
+                      ),
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        await showDialog<void>(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return StatefulBuilder(
+                                  builder: (context, setState) {
+                                    return AlertDialog(
+                                      content: Stack(
+                                        clipBehavior: Clip.none,
+                                        children: <Widget>[
+                                          Positioned(
+                                            right: -30,
+                                            top: -30,
+                                            child: InkResponse(
+                                              onTap: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: const CircleAvatar(
+                                                backgroundColor: Colors.red,
+                                                child: Icon(Icons.close),
+                                              ),
+                                            ),
+                                          ),
+                                          Form(
+                                            key: _formKey,
+                                            child: Column(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              crossAxisAlignment: CrossAxisAlignment.center,
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: <Widget>[
+                                                Padding(
+                                                  padding: const EdgeInsets.all(0),
+                                                  child: TypeAheadField<RecipeData>(
+                                                    suggestionsCallback: (value) {
+                                                      print(value);
+                                                      return getSuggestions(value);
+                                                    },
+                                                    builder: (context, controller,
+                                                        focusNode) {
+                                                      return TextField(
+                                                          controller: controller,
+                                                          focusNode: focusNode,
+                                                          autofocus: true,
+                                                          decoration: const InputDecoration(
+                                                              border:
+                                                              OutlineInputBorder(),
+                                                              labelText:
+                                                              'Search For Ingredient'));
+                                                    },
+                                                    itemBuilder:
+                                                        (context, foodData) {
+                                                      return ListTile(
+                                                        title: Text(foodData.name),
+                                                      );
+                                                    },
+                                                    onSelected: (obj) {
+                                                      setState(() {
+                                                        selectedName = obj.name;
+                                                        selectedId = obj.id;
+                                                      });
+                                                    },
+                                                  ),
+                                                ),
+                                                Text(selectedName,style: TextStyle(fontWeight: FontWeight.w800),),
+
+                                                Column(
+                                              children: [
+                                                const Text(
+                                                  'Amount',
+                                                  style:
+                                                      TextStyle(fontSize: 16),
+                                                ),
+                                                TextField(
+                                                  controller: _amountCon,
+                                                  // Set maxLines to null for multiline input
+                                                  decoration:
+                                                      const InputDecoration(
+                                                    border:
+                                                        OutlineInputBorder(),
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+
+
+                                            Padding(
+                                                  padding: const EdgeInsets.all(0),
+                                                  child: DropdownWidgetH(
+                                                    onChanged: (val) {
+                                                      setState(() {
+                                                        selectedMeasurement= val;
+                                                      });
+                                                    },
+                                                    title: "Measurement",
+                                                    items: const [
+                                                      "G",
+                                                      "MG",
+                                                    ],
+                                                    selectedValue:
+                                                    selectedMeasurement,
+                                                  ),
+                                                ),
+
+                                                Padding(
+                                                  padding: const EdgeInsets.all(0),
+                                                  child: ElevatedButton(
+                                                    child: const Text('Add'),
+                                                    onPressed: () {
+                                                      recipeList.add(
+                                                          {
+                                                            "id": selectedId,
+                                                            "addedQty": _amountCon.text,
+                                                            "addedQtyUnit": selectedMeasurement
+                                                          }
+                                                      );
+
+                                                      Navigator.of(context).pop();
+                                                      selectedName = selectedName +" "+_amountCon.text+selectedMeasurement+ " \n";
+                                                      // selectedId = recipe.id;
+                                                      recipeNameCon.text += selectedName;
+                                                    },
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  });
+                            });
                       },
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.transparent, elevation: 0),
+                      child: const Text(
+                        'Add Food',
+                        style: TextStyle(
+                          fontFamily: "Roboto",
+                          fontSize: 18.0,
+                          color: Colors.white,
+                          letterSpacing: 1.0,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
                   ),
 
+
                   const Text(
-                    'Selected Recipes',
+                    'Selected Foods',
                     style: TextStyle(fontSize: 16),
                   ),
 

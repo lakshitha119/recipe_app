@@ -80,10 +80,17 @@ class _HomeState extends State<Home> {
     int dateDifference = (date2.difference(date1).inDays).abs();
 
     // Check if the difference is 6 days
-    if (dateDifference != 6) {
-      MyToast.showError("Please select a date range equal to 7 days.");
+
+
+    if (dateDifference > 6) {
+      MyToast.showError("Please select a correct date range.");
       return;
     }
+    if (dateDifference < 0) {
+      MyToast.showError("Please select a correct date range.");
+      return;
+    }
+    print(dateDifference);
 
     Timer.run(() {
       CircleLoader.showCustomDialog(context);
