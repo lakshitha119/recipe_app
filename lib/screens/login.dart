@@ -1,81 +1,107 @@
 import 'package:flutter/material.dart';
+import 'package:form_field_validator/form_field_validator.dart';
+import 'package:recipe_app/components/bottom_navbar.dart';
+import 'package:recipe_app/screens/login.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../components/bottom_navbar.dart';
-import '../components/custom_textbox.dart';
-import '../utils/app_colors.dart';
+import 'package:recipe_app/utils/app_colors.dart';
+import 'package:recipe_app/utils/toast.dart';
 
 class Login extends StatefulWidget {
-  const Login({super.key});
-
   @override
-  State<Login> createState() => _LoginState();
+  _LoginState createState() => _LoginState();
 }
 
 class _LoginState extends State<Login> {
+  GlobalKey<FormState> formkey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [AppColors.contentColorYellow, AppColors.contentColorBlue],
-          ),
-        ),
-        child: SafeArea(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        title: Text("Login"),
+      ),
+      body: SingleChildScrollView(
+        child: Form(
+          autovalidateMode: AutovalidateMode.always,
+          key: formkey,
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.only(top: 20.0),
+                child: Center(
+                  child: Container(
+                      width: 200,
+                      height: 100,
+                      child: Image.asset('assets/images/flutterwave.png')),
+                ),
+              ),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 15),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Login',
-                      style: GoogleFonts.roboto(
-                          fontSize: 40,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.contentColorDarkBlue),
+                child: TextFormField(
+                    decoration: InputDecoration(
+                        prefixIcon: Icon(Icons.email),
+                        border: OutlineInputBorder(),
+                        labelText: 'Email',
+                        hintText: 'Enter valid email id as abc@gmail.com'),
+                    validator: MultiValidator([
+                      RequiredValidator(errorText: "* Required"),
+                      EmailValidator(errorText: "Enter valid email id"),
+                    ])),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(
+                    left: 15.0, right: 15.0, top: 15, bottom: 0),
+                child: TextFormField(
+                    obscureText: true,
+                    decoration: InputDecoration(
+                        prefixIcon: Icon(Icons.lock),
+                        border: OutlineInputBorder(),
+                        labelText: 'Password',
+                        hintText: 'Enter password'),
+                    validator: MultiValidator([
+                      RequiredValidator(errorText: "* Required"),
+                      MinLengthValidator(6,
+                          errorText: "Password should be atleast 6 characters"),
+                      MaxLengthValidator(15,
+                          errorText:
+                              "Password should not be greater than 15 characters")
+                    ])
+                    //validatePassword,        //Function to check validation
                     ),
-                    Text(
-                      'Please sign in to continue..',
-                      style: GoogleFonts.roboto(
-                          fontSize: 15, color: Colors.black87),
-                    ),
-                  ],
+              ),
+              // FlatButton(
+              //   onPressed: () {
+              //     //TODO FORGOT PASSWORD SCREEN GOES HERE
+              //   },
+              //   child: Text(
+              //     'Forgot Password',
+              //     style: TextStyle(color: Colors.blue, fontSize: 15),
+              //   ),
+              // ),
+              Container(
+                height: 50,
+                width: 250,
+                margin: EdgeInsets.only(top: 15.0),
+                decoration: BoxDecoration(
+                    color: Colors.blue,
+                    borderRadius: BorderRadius.circular(20)),
+                child: SignInButton(
+                  onPressed: () {
+                    if (formkey.currentState!.validate()) {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (_) => BottomTabBar()));
+                      print("Validated");
+                    } else {
+                      print("Not Validated");
+                    }
+                  },
                 ),
               ),
-              const SizedBox(
-                height: 15,
+              SizedBox(
+                height: 10,
               ),
-              CustomTextField(
-                icon: Icons.email,
-                label: "E-mail",
-                obscureText: false,
-              ),
-              CustomTextField(
-                icon: Icons.lock,
-                label: "Password",
-                obscureText: true,
-              ),
-              const SizedBox(
-                height: 30,
-              ),
-              Center(
-                child: Padding(
-                  padding:
-                      const EdgeInsetsDirectional.symmetric(horizontal: 60),
-                  child: LoginButton(
-                    onPressed: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => BottomTabBar()));
-                    },
-                  ),
-                ),
-              ),
+              Text('Do not have an account? Create Account')
             ],
           ),
         ),
@@ -84,10 +110,10 @@ class _LoginState extends State<Login> {
   }
 }
 
-class LoginButton extends StatelessWidget {
+class SignInButton extends StatelessWidget {
   final VoidCallback onPressed;
 
-  const LoginButton({Key? key, required this.onPressed}) : super(key: key);
+  const SignInButton({Key? key, required this.onPressed}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -110,7 +136,7 @@ class LoginButton extends StatelessWidget {
           mainAxisSize: MainAxisSize.min, // To keep the children close together
           children: [
             Text(
-              'Login',
+              'Sign In',
               style: GoogleFonts.roboto(fontSize: 20, color: Colors.white),
             ),
             SizedBox(width: 10),

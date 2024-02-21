@@ -40,6 +40,7 @@ dependencies:
   flutter_typeahead: ^5.0.1
   fluttertoast: ^8.2.4
   google_fonts: ^4.0.4
+  form_field_validator: ^1.1.0
 
 dev_dependencies:
   flutter_test:
