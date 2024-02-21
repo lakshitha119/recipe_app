@@ -55,15 +55,20 @@ class _ViewRecipeState extends State<ViewRecipe> {
             for (var item in recipeList) {
               if (item["name"] != null) {
                 setState(() {
-                  listViews.add(RecipeCard(id:item["id"],title: item["name"],desc: " "));
+                  listViews.add(RecipeCard(
+                    id: item["id"],
+                    title: item["name"],
+                    desc: " ",
+                    mealId: res["results"]["id"],
+                    type: "Meal",
+                  ));
                 });
               }
             }
           }
         } else {}
       });
-    } else {
-    }
+    } else {}
   }
 
   @override
@@ -123,7 +128,9 @@ class _ViewRecipeState extends State<ViewRecipe> {
                     color: Colors.black,
                     thickness: 10.0,
                   ),
-                  SizedBox(height: 10,),
+                  SizedBox(
+                    height: 10,
+                  ),
 
                   Column(
                     children: listViews,

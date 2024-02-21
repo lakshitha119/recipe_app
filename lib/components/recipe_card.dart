@@ -8,13 +8,17 @@ class RecipeCard extends StatelessWidget {
   final String title;
   final String desc;
   final String id;
+  final String? mealId;
+  final String type;
 
-  const RecipeCard({
-    Key? key,
-    required this.title,
-    required this.desc,
-    required this.id,
-  }) : super(key: key);
+  const RecipeCard(
+      {Key? key,
+      required this.title,
+      required this.desc,
+      required this.id,
+      this.mealId,
+      this.type = "Recipe"})
+      : super(key: key);
   static const blue = Color.fromARGB(255, 0, 23, 147);
 
   @override
@@ -78,7 +82,11 @@ class RecipeCard extends StatelessWidget {
                     onPressed: () {
                       Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => ViewIngredient(
-                              id: id, title: title, type: "Recipe")));
+                                id: id,
+                                title: title,
+                                type: type,
+                                mealId: mealId,
+                              )));
                     },
                     style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.transparent, elevation: 0),

@@ -13,9 +13,14 @@ class ViewIngredient extends StatefulWidget {
   final String title;
   final String type;
   final String id;
+  final String? mealId;
 
   const ViewIngredient(
-      {Key? key, required this.title, required this.type, required this.id})
+      {Key? key,
+      required this.title,
+      required this.type,
+      required this.id,
+      this.mealId})
       : super(key: key);
 
   @override
@@ -43,7 +48,32 @@ class _ViewIngredientState extends State<ViewIngredient> {
     Timer.run(() {
       CircleLoader.showCustomDialog(context);
     });
+    print("${widget.mealId} ${widget.id} ${widget.type}");
     if (widget.type == "Meal") {
+      APIManager()
+          .getRequest(
+              "${Constant.domain}/api/Meals/RecipiesByMealId/${widget.mealId}/${widget.id}")
+          .then((res) {
+        CircleLoader.hideLoader(context);
+
+        // var nutritionList = res["results"]["ingredients"][0]["nutritions"];
+        var ingredientList = res["results"]["ingredients"];
+
+        if (ingredientList != null) {
+          if (ingredientList.length != 0) {
+            for (var item in ingredientList) {
+              if (item["name"] != null) {
+                setState(() {
+                  listViews.add(IngredientRow(
+                      title: item["name"],
+                      size: item["includedSizeInGrams"].toString() +
+                          item["incudedUnit"]));
+                });
+              }
+            }
+          }
+        } else {}
+      });
     } else {
       APIManager()
           .getRequest("${Constant.domain}/api/v1/Recipe/${widget.id}")
