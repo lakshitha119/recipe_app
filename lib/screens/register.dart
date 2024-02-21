@@ -3,24 +3,28 @@ import 'package:form_field_validator/form_field_validator.dart';
 import 'package:recipe_app/components/bottom_navbar.dart';
 import 'package:recipe_app/screens/login.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:recipe_app/screens/register.dart';
 import 'package:recipe_app/utils/app_colors.dart';
-import 'package:recipe_app/utils/toast.dart';
 
-class Login extends StatefulWidget {
+class Register extends StatefulWidget {
   @override
-  _LoginState createState() => _LoginState();
+  _RegisterState createState() => _RegisterState();
 }
 
-class _LoginState extends State<Login> {
+class _RegisterState extends State<Register> {
   GlobalKey<FormState> formkey = GlobalKey<FormState>();
 
+  bool isEqual(String str1, String str2) {
+    return str1 == (str2);
+  }
+
+  TextEditingController password = TextEditingController();
+  TextEditingController confirmpassword = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text("Login"),
+        title: Text("Create Account"),
       ),
       body: SingleChildScrollView(
         child: Form(
@@ -34,11 +38,24 @@ class _LoginState extends State<Login> {
                   child: Container(
                       width: 200,
                       height: 100,
-                      child: Image.asset('assets/images/flutterwave.png')),
+                      child: Image.asset('assets/images/nutrition-plan.png')),
                 ),
               ),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 15),
+                child: TextFormField(
+                    decoration: InputDecoration(
+                        prefixIcon: Icon(Icons.person),
+                        border: OutlineInputBorder(),
+                        labelText: 'Username',
+                        hintText: 'Enter Username'),
+                    validator: MultiValidator([
+                      RequiredValidator(errorText: "* Required"),
+                    ])),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(
+                    left: 15.0, right: 15.0, top: 15, bottom: 0),
                 child: TextFormField(
                     decoration: InputDecoration(
                         prefixIcon: Icon(Icons.email),
@@ -55,21 +72,43 @@ class _LoginState extends State<Login> {
                     left: 15.0, right: 15.0, top: 15, bottom: 0),
                 child: TextFormField(
                     obscureText: true,
+                    controller: password,
                     decoration: InputDecoration(
                         prefixIcon: Icon(Icons.lock),
                         border: OutlineInputBorder(),
                         labelText: 'Password',
-                        hintText: 'Enter password'),
+                        hintText: 'Enter secure password'),
                     validator: MultiValidator([
                       RequiredValidator(errorText: "* Required"),
                       MinLengthValidator(6,
                           errorText: "Password should be atleast 6 characters"),
                       MaxLengthValidator(15,
                           errorText:
-                              "Password should not be greater than 15 characters")
-                    ])
-                    //validatePassword,        //Function to check validation
-                    ),
+                              "Password should not be greater than 15 characters"),
+                    ])),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(
+                    left: 15.0, right: 15.0, top: 15, bottom: 0),
+                child: TextFormField(
+                  obscureText: true,
+                  controller: confirmpassword,
+                  keyboardType: TextInputType.text,
+                  decoration: InputDecoration(
+                      prefixIcon: Icon(Icons.lock),
+                      border: OutlineInputBorder(),
+                      labelText: 'Re Enter password',
+                      hintText: 'Re Enter password'),
+                  validator: (String? value) {
+                    if (value!.isEmpty) {
+                      return 'Please re-enter password';
+                    }
+                    if (password.text != confirmpassword.text) {
+                      return "Password does not match";
+                    }
+                    return null;
+                  },
+                ),
               ),
               // FlatButton(
               //   onPressed: () {
@@ -87,15 +126,12 @@ class _LoginState extends State<Login> {
                 decoration: BoxDecoration(
                     color: Colors.blue,
                     borderRadius: BorderRadius.circular(20)),
-                child: SignInButton(
+                child: SignUpButton(
                   onPressed: () {
                     if (formkey.currentState!.validate()) {
                       Navigator.push(context,
                           MaterialPageRoute(builder: (_) => BottomTabBar()));
-                      print("Validated");
-                    } else {
-                      print("Not Validated");
-                    }
+                    } else {}
                   },
                 ),
               ),
@@ -106,10 +142,10 @@ class _LoginState extends State<Login> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => Register()),
+                    MaterialPageRoute(builder: (context) => Login()),
                   );
                 },
-                child: Text('Do not have an account? Create Account'),
+                child: Text('Already have an account ? Login'),
               ),
             ],
           ),
@@ -119,10 +155,10 @@ class _LoginState extends State<Login> {
   }
 }
 
-class SignInButton extends StatelessWidget {
+class SignUpButton extends StatelessWidget {
   final VoidCallback onPressed;
 
-  const SignInButton({Key? key, required this.onPressed}) : super(key: key);
+  const SignUpButton({Key? key, required this.onPressed}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -145,7 +181,7 @@ class SignInButton extends StatelessWidget {
           mainAxisSize: MainAxisSize.min, // To keep the children close together
           children: [
             Text(
-              'Sign In',
+              'Sign Up',
               style: GoogleFonts.roboto(fontSize: 20, color: Colors.white),
             ),
             SizedBox(width: 10),
