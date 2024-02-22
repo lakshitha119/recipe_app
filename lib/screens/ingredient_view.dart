@@ -90,8 +90,8 @@ class _ViewIngredientState extends State<ViewIngredient> {
                 setState(() {
                   listViews.add(IngredientRow(
                       title: item["name"],
-                      size: item["servingSize"].toString() +
-                          item["servingSizeUnit"]));
+                      size: item["includedSize"].toString() +
+                          item["incudedUnit"]));
                 });
               }
             }

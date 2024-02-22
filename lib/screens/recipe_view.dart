@@ -16,7 +16,7 @@ class ViewRecipe extends StatefulWidget {
   final String id;
 
   const ViewRecipe(
-      {Key? key, required this.title, required this.type, required this.id})
+      {Key? key, required this.title, this.type = "Meal", required this.id})
       : super(key: key);
 
   @override
@@ -60,7 +60,7 @@ class _ViewRecipeState extends State<ViewRecipe> {
                     title: item["name"],
                     desc: " ",
                     mealId: res["results"]["id"],
-                    type: "Meal",
+                    type: widget.type,
                   ));
                 });
               }
@@ -68,7 +68,34 @@ class _ViewRecipeState extends State<ViewRecipe> {
           }
         } else {}
       });
-    } else {}
+    } else {
+      APIManager()
+          .getRequest("${Constant.domain}/api/Meals/${widget.id}")
+          .then((res) {
+        CircleLoader.hideLoader(context);
+
+        // var nutritionList = res["results"]["ingredients"][0]["nutritions"];
+        var recipeList = res["results"]["recipes"];
+
+        if (recipeList != null) {
+          if (recipeList.length != 0) {
+            for (var item in recipeList) {
+              if (item["name"] != null) {
+                setState(() {
+                  listViews.add(RecipeCard(
+                    id: item["id"],
+                    title: item["name"],
+                    desc: " ",
+                    mealId: res["results"]["id"],
+                    type: widget.type,
+                  ));
+                });
+              }
+            }
+          }
+        } else {}
+      });
+    }
   }
 
   @override

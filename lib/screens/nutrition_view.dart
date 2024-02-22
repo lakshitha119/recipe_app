@@ -46,6 +46,7 @@ class _NutritionViewState extends State<NutritionView> {
   List<Widget> nutritionListViews = [];
 
   loadNutritionData() {
+    print("type :- ${widget.type}");
     Timer.run(() {
       CircleLoader.showCustomDialog(context);
     });
@@ -85,7 +86,7 @@ class _NutritionViewState extends State<NutritionView> {
         var ingredientList = res["results"]["ingredients"];
 
         if (ingredientList != null) {
-          print("ingredientListingredientList");
+          print("ingredientList");
           print(ingredientList);
           for (var ing in ingredientList) {
             var nutritionList = ing["nutritions"];
@@ -124,7 +125,7 @@ class _NutritionViewState extends State<NutritionView> {
         var ingredientList = res["results"]["ingredients"];
 
         if (ingredientList != null) {
-          print("ingredientListingredientList");
+          print("ingredientList");
           print(ingredientList);
           for (var ing in ingredientList) {
             var nutritionList = ing["nutritions"];
