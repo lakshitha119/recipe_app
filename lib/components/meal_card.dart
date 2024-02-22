@@ -107,7 +107,7 @@ class MealCard extends StatelessWidget {
                     onPressed: () {
                       Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => NutritionView(
-                              id: id, title: title, type: "Meal")));
+                              id: id, title: title, type: "MealRecipe")));
                     },
                     style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.transparent, elevation: 0),

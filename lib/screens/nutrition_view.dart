@@ -14,9 +14,13 @@ class NutritionView extends StatefulWidget {
   final String title;
   final String id;
   final String type;
-
+  final String? mealid;
   const NutritionView(
-      {Key? key, required this.title, required this.type, required this.id})
+      {Key? key,
+      required this.title,
+      required this.type,
+      required this.id,
+      this.mealid})
       : super(key: key);
 
   @override
@@ -57,13 +61,56 @@ class _NutritionViewState extends State<NutritionView> {
         if (totalNuritionList != null) {
           if (totalNuritionList.length != 0) {
             for (var item in totalNuritionList) {
-              var amount = item["amount"].toStringAsFixed(2).toString();
+              var amount =
+                  item["amountByIngredientSize"].toStringAsFixed(2).toString();
               setState(() {
                 nutritionListViews.add(NutritionRow(
                     title: item["name"] + " " + amount + item["unitName"],
                     amount: amount));
                 // nutritionList = nutritionList;
               });
+            }
+          }
+        } else {}
+      });
+    } else if (widget.type == "MealRecipe") {
+      print(
+          "${Constant.domain}/api/Meals/RecipiesByMealId/${widget.mealid}/${widget.id}");
+      APIManager()
+          .getRequest(
+              "${Constant.domain}/api/Meals/RecipiesByMealId/${widget.mealid}/${widget.id}")
+          .then((res) {
+        CircleLoader.hideLoader(context);
+
+        var ingredientList = res["results"]["ingredients"];
+
+        if (ingredientList != null) {
+          print("ingredientListingredientList");
+          print(ingredientList);
+          for (var ing in ingredientList) {
+            var nutritionList = ing["nutritions"];
+            if (ing["name"] != null) {
+              nutritionListViews.add(Padding(
+                  padding: const EdgeInsets.only(bottom: 0, top: 10),
+                  child: Text(ing["name"].toString(),
+                      softWrap: true,
+                      style: TextStyle(
+                          fontSize: 18.0, fontWeight: FontWeight.w800))));
+              if (nutritionList != null) {
+                if (nutritionList.length != 0) {
+                  for (var item in nutritionList) {
+                    var amount = item["amountByIngredientSize"]
+                        .toStringAsFixed(2)
+                        .toString();
+                    setState(() {
+                      nutritionListViews.add(NutritionRow(
+                          title: item["name"] + " " + amount + item["unitName"],
+                          amount: amount));
+                      // nutritionList = nutritionList;
+                    });
+                  }
+                }
+              } else {}
             }
           }
         } else {}
@@ -91,7 +138,9 @@ class _NutritionViewState extends State<NutritionView> {
               if (nutritionList != null) {
                 if (nutritionList.length != 0) {
                   for (var item in nutritionList) {
-                    var amount = item["amount"].toStringAsFixed(2).toString();
+                    var amount = item["amountByIngredientSize"]
+                        .toStringAsFixed(2)
+                        .toString();
                     setState(() {
                       nutritionListViews.add(NutritionRow(
                           title: item["name"] + " " + amount + item["unitName"],
