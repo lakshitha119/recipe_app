@@ -6,6 +6,11 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:recipe_app/screens/register.dart';
 import 'package:recipe_app/utils/app_colors.dart';
 import 'package:recipe_app/utils/toast.dart';
+import 'package:crypto/crypto.dart';
+import 'dart:convert' show utf8;
+import 'dart:async';
+import 'package:recipe_app/services/api.dart';
+import 'package:recipe_app/utils/constant.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -14,6 +19,43 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   GlobalKey<FormState> formkey = GlobalKey<FormState>();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordContoller = TextEditingController();
+  var _isDisable = false;
+  encriptPassword(String password) {
+    if (password.isNotEmpty) {
+      var bytes1 = utf8.encode(password);
+      return sha256.convert(bytes1).toString();
+    }
+    return null;
+  }
+
+  registerNewUser() async {
+    setState(() {
+      _isDisable = true;
+    });
+    var data = {
+      "email": emailController.text,
+      "password": encriptPassword(passwordContoller.text)
+    };
+    print(data);
+    APIManager()
+        .postRequest(Constant.domain + "/api/Account/Login", data)
+        .then((res) {
+      setState(() {
+        _isDisable = false;
+      });
+      print(res);
+      if (res["isSucess"]) {
+        //need to save user id here
+        MyToast.showSuccess("Login success");
+        Navigator.push(
+            context, MaterialPageRoute(builder: (_) => BottomTabBar()));
+      } else {
+        MyToast.showError("Login Failed!");
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,6 +82,7 @@ class _LoginState extends State<Login> {
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 15),
                 child: TextFormField(
+                    controller: emailController,
                     decoration: InputDecoration(
                         prefixIcon: Icon(Icons.email),
                         border: OutlineInputBorder(),
@@ -54,6 +97,7 @@ class _LoginState extends State<Login> {
                 padding: const EdgeInsets.only(
                     left: 15.0, right: 15.0, top: 15, bottom: 0),
                 child: TextFormField(
+                    controller: passwordContoller,
                     obscureText: true,
                     decoration: InputDecoration(
                         prefixIcon: Icon(Icons.lock),
@@ -88,6 +132,7 @@ class _LoginState extends State<Login> {
                     color: Colors.blue,
                     borderRadius: BorderRadius.circular(20)),
                 child: SignInButton(
+                  isDisable: _isDisable,
                   onPressed: () {
                     if (formkey.currentState!.validate()) {
                       Navigator.push(context,
@@ -104,6 +149,7 @@ class _LoginState extends State<Login> {
               ),
               ElevatedButton(
                 onPressed: () {
+                  registerNewUser();
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => Register()),
@@ -121,8 +167,11 @@ class _LoginState extends State<Login> {
 
 class SignInButton extends StatelessWidget {
   final VoidCallback onPressed;
+  final bool isDisable;
 
-  const SignInButton({Key? key, required this.onPressed}) : super(key: key);
+  const SignInButton(
+      {Key? key, required this.onPressed, required this.isDisable})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -133,7 +182,7 @@ class SignInButton extends StatelessWidget {
 
           color: AppColors.contentColorDarkBlue),
       child: ElevatedButton(
-        onPressed: onPressed,
+        onPressed: isDisable ? null : onPressed,
         style: ElevatedButton.styleFrom(
           primary: Colors.transparent, // Transparent background
           shadowColor: Colors.transparent,

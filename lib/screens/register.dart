@@ -4,6 +4,12 @@ import 'package:recipe_app/components/bottom_navbar.dart';
 import 'package:recipe_app/screens/login.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:recipe_app/utils/app_colors.dart';
+import '../utils/toast.dart';
+import 'dart:async';
+import 'package:recipe_app/services/api.dart';
+import 'package:recipe_app/utils/constant.dart';
+import 'package:crypto/crypto.dart';
+import 'dart:convert' show utf8;
 
 class Register extends StatefulWidget {
   @override
@@ -19,6 +25,49 @@ class _RegisterState extends State<Register> {
 
   TextEditingController password = TextEditingController();
   TextEditingController confirmpassword = TextEditingController();
+  TextEditingController fullnameController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController mobileController = TextEditingController();
+  var _isDisable = false;
+  encriptPassword(String password) {
+    if (password.isNotEmpty) {
+      var bytes1 = utf8.encode(password);
+      return sha256.convert(bytes1).toString();
+    }
+    return null;
+  }
+
+  registerNewUser() async {
+    setState(() {
+      _isDisable = true;
+    });
+    var data = {
+      "name": fullnameController.text,
+      "email": emailController.text,
+      "mobileNo": mobileController.text,
+      "password": encriptPassword(password.text)
+    };
+    print(data);
+    APIManager()
+        .postRequest(Constant.domain + "/api/Account/Register", data)
+        .then((res) {
+      setState(() {
+        _isDisable = false;
+      });
+      print(res);
+      if (res["isSucess"]) {
+        MyToast.showSuccess(
+            "The User successfully saved. please login with credentials");
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => Login()),
+        );
+      } else {
+        MyToast.showError("Failed to register user!");
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,11 +93,12 @@ class _RegisterState extends State<Register> {
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 15),
                 child: TextFormField(
+                    controller: fullnameController,
                     decoration: InputDecoration(
                         prefixIcon: Icon(Icons.person),
                         border: OutlineInputBorder(),
-                        labelText: 'Username',
-                        hintText: 'Enter Username'),
+                        labelText: 'Full Name',
+                        hintText: 'Enter Full Name'),
                     validator: MultiValidator([
                       RequiredValidator(errorText: "* Required"),
                     ])),
@@ -57,6 +107,22 @@ class _RegisterState extends State<Register> {
                 padding: const EdgeInsets.only(
                     left: 15.0, right: 15.0, top: 15, bottom: 0),
                 child: TextFormField(
+                    controller: mobileController,
+                    decoration: InputDecoration(
+                        prefixIcon: Icon(Icons.phone),
+                        border: OutlineInputBorder(),
+                        labelText: 'Mobile No',
+                        hintText: 'Enter Mobile No'),
+                    keyboardType: TextInputType.phone,
+                    validator: MultiValidator([
+                      RequiredValidator(errorText: "* Required"),
+                    ])),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(
+                    left: 15.0, right: 15.0, top: 15, bottom: 0),
+                child: TextFormField(
+                    controller: emailController,
                     decoration: InputDecoration(
                         prefixIcon: Icon(Icons.email),
                         border: OutlineInputBorder(),
@@ -127,10 +193,12 @@ class _RegisterState extends State<Register> {
                     color: Colors.blue,
                     borderRadius: BorderRadius.circular(20)),
                 child: SignUpButton(
+                  isDisable: _isDisable,
                   onPressed: () {
                     if (formkey.currentState!.validate()) {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (_) => BottomTabBar()));
+                      registerNewUser();
+                      //Navigator.push(context,
+                      //  MaterialPageRoute(builder: (_) => BottomTabBar()));
                     } else {}
                   },
                 ),
@@ -157,8 +225,11 @@ class _RegisterState extends State<Register> {
 
 class SignUpButton extends StatelessWidget {
   final VoidCallback onPressed;
+  final bool isDisable;
 
-  const SignUpButton({Key? key, required this.onPressed}) : super(key: key);
+  const SignUpButton(
+      {Key? key, required this.onPressed, required this.isDisable})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -169,7 +240,7 @@ class SignUpButton extends StatelessWidget {
 
           color: AppColors.contentColorDarkBlue),
       child: ElevatedButton(
-        onPressed: onPressed,
+        onPressed: isDisable ? null : onPressed,
         style: ElevatedButton.styleFrom(
           primary: Colors.transparent, // Transparent background
           shadowColor: Colors.transparent,
