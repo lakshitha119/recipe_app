@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';
-import 'package:recipe_app/components/bottom_navbar.dart';
-import 'package:recipe_app/screens/login.dart';
+import '../components/bottom_navbar.dart';
+import '../screens/login.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:recipe_app/utils/app_colors.dart';
+import '../utils/app_colors.dart';
 import '../utils/toast.dart';
 import 'dart:async';
-import 'package:recipe_app/services/api.dart';
-import 'package:recipe_app/utils/constant.dart';
+import '../services/api.dart';
+import '../utils/constant.dart';
 import 'package:crypto/crypto.dart';
 import 'dart:convert' show utf8;
 

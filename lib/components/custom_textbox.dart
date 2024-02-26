@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:recipe_app/utils/app_colors.dart';
+import '../utils/app_colors.dart';
 
 class CustomTextField extends StatelessWidget {
   IconData icon;

@@ -1,7 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:recipe_app/components/circle_loader.dart';
-import 'package:recipe_app/services/api.dart';
+import '../components/circle_loader.dart';
+import '../services/api.dart';
 
 import '../utils/app_colors.dart';
 import '../utils/constant.dart';

@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';
-import 'package:recipe_app/components/bottom_navbar.dart';
-import 'package:recipe_app/screens/login.dart';
+import '../components/bottom_navbar.dart';
+import '../screens/login.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:recipe_app/screens/register.dart';
-import 'package:recipe_app/utils/app_colors.dart';
-import 'package:recipe_app/utils/toast.dart';
+import 'package:path_provider_android/messages.g.dart';
+import '../utils/app_colors.dart';
+import '../utils/toast.dart';
 import 'package:crypto/crypto.dart';
 import 'dart:convert' show utf8;
 import 'dart:async';
-import 'package:recipe_app/services/api.dart';
-import 'package:recipe_app/utils/constant.dart';
+import '../services/api.dart';
+import '../utils/constant.dart';
+import '../screens/register.dart';
+import '../components/circle_loader.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -30,7 +32,10 @@ class _LoginState extends State<Login> {
     return null;
   }
 
-  registerNewUser() async {
+  login() async {
+    Timer.run(() {
+      CircleLoader.showCustomDialog(context);
+    });
     setState(() {
       _isDisable = true;
     });
@@ -42,10 +47,11 @@ class _LoginState extends State<Login> {
     APIManager()
         .postRequest(Constant.domain + "/api/Account/Login", data)
         .then((res) {
+      print(res);
       setState(() {
         _isDisable = false;
       });
-      print(res);
+      CircleLoader.hideLoader(context);
       if (res["isSucess"]) {
         //need to save user id here
         MyToast.showSuccess("Login success");
@@ -135,9 +141,8 @@ class _LoginState extends State<Login> {
                   isDisable: _isDisable,
                   onPressed: () {
                     if (formkey.currentState!.validate()) {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (_) => BottomTabBar()));
                       print("Validated");
+                      login();
                     } else {
                       print("Not Validated");
                     }
@@ -149,7 +154,6 @@ class _LoginState extends State<Login> {
               ),
               ElevatedButton(
                 onPressed: () {
-                  registerNewUser();
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => Register()),

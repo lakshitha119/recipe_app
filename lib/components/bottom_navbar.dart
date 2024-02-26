@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:recipe_app/screens/build_meal.dart';
-import 'package:recipe_app/screens/my_meal.dart';
-import 'package:recipe_app/screens/search_query.dart';
+import '../screens/build_meal.dart';
+import '../screens/my_meal.dart';
+import '../screens/search_query.dart';
 import '../screens/bar_chart_sample2.dart';
 import '../screens/home.dart';
 import '../screens/my_recipe.dart';
@@ -10,7 +10,6 @@ import '../screens/pie.dart';
 import '../screens/recipe_add.dart';
 
 class BottomTabBar extends StatefulWidget {
-
   BottomTabBar({Key? key}) : super(key: key);
 
   @override
@@ -38,7 +37,7 @@ class _BottomTabBarState extends State<BottomTabBar> {
                 _currentIndex = index;
               });
             },
-            children:  [
+            children: [
               Home(),
               // RecipeAdd(),
               MyRecipe(),

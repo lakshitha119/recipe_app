@@ -3,8 +3,8 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:recipe_app/components/ingredient_row.dart';
-import 'package:recipe_app/utils/constant.dart';
+import '../components/ingredient_row.dart';
+import '../utils/constant.dart';
 
 import '../components/circle_loader.dart';
 import '../services/api.dart';

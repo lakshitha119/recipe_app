@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:recipe_app/screens/home.dart';
+import '../screens/home.dart';
 
 import 'components/bottom_navbar.dart';
 import 'screens/login.dart';

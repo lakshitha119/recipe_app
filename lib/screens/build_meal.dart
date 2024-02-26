@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
-import 'package:recipe_app/components/dropdown_widget_h.dart';
-import 'package:recipe_app/services/api.dart';
-import 'package:recipe_app/utils/constant.dart';
+import '../components/dropdown_widget_h.dart';
+import '../services/api.dart';
+import '../utils/constant.dart';
 import '../components/circle_loader.dart';
 import '../components/dropdown_widget.dart';
 import 'package:intl/intl.dart';
@@ -87,8 +87,8 @@ class _BuildMealState extends State<BuildMeal> {
       CircleLoader.showCustomDialog(context);
     });
     allFilterList = [];
-    final value = await APIManager()
-        .getRequest(Constant.domain + "/api/v1/Recipe/GetByUserName/Lakshitha119");
+    final value = await APIManager().getRequest(
+        Constant.domain + "/api/v1/Recipe/GetByUserName/Lakshitha119");
     if (value != null && value['results'] != null) {
       CircleLoader.hideLoader(context);
       if (value['results'] != 0) {
@@ -126,18 +126,18 @@ class _BuildMealState extends State<BuildMeal> {
       print(res);
       if (res["isSucess"]) {
         MyToast.showSuccess("Meal Added");
-        Navigator.pop(context,true);
+        Navigator.pop(context, true);
       } else {
         MyToast.showError("Failed to add meal");
       }
     });
   }
 
-
   List<RecipeData> getSuggestions(String query) {
     List<RecipeData> matches = [];
     matches.addAll(allFilterList);
-    matches.retainWhere((s) => s.name.toLowerCase().contains(query.toLowerCase()));
+    matches
+        .retainWhere((s) => s.name.toLowerCase().contains(query.toLowerCase()));
     return matches;
   }
 
@@ -261,7 +261,6 @@ class _BuildMealState extends State<BuildMeal> {
                         selectedValue: mealType,
                       )),
 
-
                   Container(
                     width: MediaQuery.of(context).size.width / 100 * 100,
                     decoration: BoxDecoration(
@@ -279,66 +278,71 @@ class _BuildMealState extends State<BuildMeal> {
                             builder: (BuildContext context) {
                               return StatefulBuilder(
                                   builder: (context, setState) {
-                                    return AlertDialog(
-                                      content: Stack(
-                                        clipBehavior: Clip.none,
-                                        children: <Widget>[
-                                          Positioned(
-                                            right: -30,
-                                            top: -30,
-                                            child: InkResponse(
-                                              onTap: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                              child: const CircleAvatar(
-                                                backgroundColor: Colors.red,
-                                                child: Icon(Icons.close),
+                                return AlertDialog(
+                                  content: Stack(
+                                    clipBehavior: Clip.none,
+                                    children: <Widget>[
+                                      Positioned(
+                                        right: -30,
+                                        top: -30,
+                                        child: InkResponse(
+                                          onTap: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: const CircleAvatar(
+                                            backgroundColor: Colors.red,
+                                            child: Icon(Icons.close),
+                                          ),
+                                        ),
+                                      ),
+                                      Form(
+                                        key: _formKey,
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: <Widget>[
+                                            Padding(
+                                              padding: const EdgeInsets.all(0),
+                                              child: TypeAheadField<RecipeData>(
+                                                suggestionsCallback: (value) {
+                                                  print(value);
+                                                  return getSuggestions(value);
+                                                },
+                                                builder: (context, controller,
+                                                    focusNode) {
+                                                  return TextField(
+                                                      controller: controller,
+                                                      focusNode: focusNode,
+                                                      autofocus: true,
+                                                      decoration: const InputDecoration(
+                                                          border:
+                                                              OutlineInputBorder(),
+                                                          labelText:
+                                                              'Search For Ingredient'));
+                                                },
+                                                itemBuilder:
+                                                    (context, foodData) {
+                                                  return ListTile(
+                                                    title: Text(foodData.name),
+                                                  );
+                                                },
+                                                onSelected: (obj) {
+                                                  setState(() {
+                                                    selectedName = obj.name;
+                                                    selectedId = obj.id;
+                                                  });
+                                                },
                                               ),
                                             ),
-                                          ),
-                                          Form(
-                                            key: _formKey,
-                                            child: Column(
-                                              mainAxisAlignment: MainAxisAlignment.center,
-                                              crossAxisAlignment: CrossAxisAlignment.center,
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: <Widget>[
-                                                Padding(
-                                                  padding: const EdgeInsets.all(0),
-                                                  child: TypeAheadField<RecipeData>(
-                                                    suggestionsCallback: (value) {
-                                                      print(value);
-                                                      return getSuggestions(value);
-                                                    },
-                                                    builder: (context, controller,
-                                                        focusNode) {
-                                                      return TextField(
-                                                          controller: controller,
-                                                          focusNode: focusNode,
-                                                          autofocus: true,
-                                                          decoration: const InputDecoration(
-                                                              border:
-                                                              OutlineInputBorder(),
-                                                              labelText:
-                                                              'Search For Ingredient'));
-                                                    },
-                                                    itemBuilder:
-                                                        (context, foodData) {
-                                                      return ListTile(
-                                                        title: Text(foodData.name),
-                                                      );
-                                                    },
-                                                    onSelected: (obj) {
-                                                      setState(() {
-                                                        selectedName = obj.name;
-                                                        selectedId = obj.id;
-                                                      });
-                                                    },
-                                                  ),
-                                                ),
-                                                Text(selectedName,style: TextStyle(fontWeight: FontWeight.w800),),
-
-                                                Column(
+                                            Text(
+                                              selectedName,
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.w800),
+                                            ),
+                                            Column(
                                               children: [
                                                 const Text(
                                                   'Amount',
@@ -356,53 +360,54 @@ class _BuildMealState extends State<BuildMeal> {
                                                 )
                                               ],
                                             ),
-
-
                                             Padding(
-                                                  padding: const EdgeInsets.all(0),
-                                                  child: DropdownWidgetH(
-                                                    onChanged: (val) {
-                                                      setState(() {
-                                                        selectedMeasurement= val;
-                                                      });
-                                                    },
-                                                    title: "Measurement",
-                                                    items: const [
-                                                      "G",
-                                                      "MG",
-                                                    ],
-                                                    selectedValue:
+                                              padding: const EdgeInsets.all(0),
+                                              child: DropdownWidgetH(
+                                                onChanged: (val) {
+                                                  setState(() {
+                                                    selectedMeasurement = val;
+                                                  });
+                                                },
+                                                title: "Measurement",
+                                                items: const [
+                                                  "G",
+                                                  "MG",
+                                                ],
+                                                selectedValue:
                                                     selectedMeasurement,
-                                                  ),
-                                                ),
-
-                                                Padding(
-                                                  padding: const EdgeInsets.all(0),
-                                                  child: ElevatedButton(
-                                                    child: const Text('Add'),
-                                                    onPressed: () {
-                                                      recipeList.add(
-                                                          {
-                                                            "id": selectedId,
-                                                            "addedQty": _amountCon.text,
-                                                            "addedQtyUnit": selectedMeasurement
-                                                          }
-                                                      );
-
-                                                      Navigator.of(context).pop();
-                                                      selectedName = selectedName +" "+_amountCon.text+selectedMeasurement+ " \n";
-                                                      // selectedId = recipe.id;
-                                                      recipeNameCon.text += selectedName;
-                                                    },
-                                                  ),
-                                                )
-                                              ],
+                                              ),
                                             ),
-                                          ),
-                                        ],
+                                            Padding(
+                                              padding: const EdgeInsets.all(0),
+                                              child: ElevatedButton(
+                                                child: const Text('Add'),
+                                                onPressed: () {
+                                                  recipeList.add({
+                                                    "id": selectedId,
+                                                    "addedQty": _amountCon.text,
+                                                    "addedQtyUnit":
+                                                        selectedMeasurement
+                                                  });
+
+                                                  Navigator.of(context).pop();
+                                                  selectedName = selectedName +
+                                                      " " +
+                                                      _amountCon.text +
+                                                      selectedMeasurement +
+                                                      " \n";
+                                                  // selectedId = recipe.id;
+                                                  recipeNameCon.text +=
+                                                      selectedName;
+                                                },
+                                              ),
+                                            )
+                                          ],
+                                        ),
                                       ),
-                                    );
-                                  });
+                                    ],
+                                  ),
+                                );
+                              });
                             });
                       },
                       style: ElevatedButton.styleFrom(
@@ -419,7 +424,6 @@ class _BuildMealState extends State<BuildMeal> {
                       ),
                     ),
                   ),
-
 
                   const Text(
                     'Selected Foods',
@@ -479,14 +483,15 @@ class _BuildMealState extends State<BuildMeal> {
                       borderRadius: BorderRadius.circular(10.0),
                     ),
                     child: ElevatedButton(
-                      onPressed: _isDisable? null : () {
-                        if (recipeList.length == 0) {
-                          MyToast.showError("Please add a recipe");
-                        } else {
-
-                          saveMeal();
-                        }
-                      },
+                      onPressed: _isDisable
+                          ? null
+                          : () {
+                              if (recipeList.length == 0) {
+                                MyToast.showError("Please add a recipe");
+                              } else {
+                                saveMeal();
+                              }
+                            },
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.transparent, elevation: 0),
                       child: const Text(

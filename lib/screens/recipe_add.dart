@@ -5,8 +5,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:recipe_app/data/food_data.dart';
-import 'package:recipe_app/services/state_servies.dart';
+import '../data/food_data.dart';
+import '../services/state_servies.dart';
 
 import '../components/circle_loader.dart';
 import '../components/dropdown_widget.dart';
@@ -120,7 +120,7 @@ class _RecipeAddState extends State<RecipeAdd> {
       });
       if (res["isSucess"]) {
         MyToast.showSuccess("Recipe Added");
-        Navigator.pop(context,true);
+        Navigator.pop(context, true);
       } else {
         MyToast.showError("Failed to add recipe");
       }
@@ -217,8 +217,10 @@ class _RecipeAddState extends State<RecipeAdd> {
                                       Form(
                                         key: _formKey,
                                         child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
                                           mainAxisSize: MainAxisSize.min,
                                           children: <Widget>[
                                             Padding(
@@ -255,7 +257,11 @@ class _RecipeAddState extends State<RecipeAdd> {
                                                 },
                                               ),
                                             ),
-                                            Text(selectedIngName,style: TextStyle(fontWeight: FontWeight.w800),),
+                                            Text(
+                                              selectedIngName,
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.w800),
+                                            ),
                                             Padding(
                                               padding: const EdgeInsets.all(0),
                                               child: DropdownWidget(
@@ -274,8 +280,7 @@ class _RecipeAddState extends State<RecipeAdd> {
                                                   "6",
                                                   "7"
                                                 ],
-                                                selectedValue:
-                                                selectedAmount,
+                                                selectedValue: selectedAmount,
                                               ),
                                             ),
                                             Padding(
@@ -300,7 +305,6 @@ class _RecipeAddState extends State<RecipeAdd> {
                                                   selectedValue:
                                                       selectedMeasurement,
                                                 )),
-
                                             Padding(
                                               padding: const EdgeInsets.all(0),
                                               child: ElevatedButton(
@@ -368,27 +372,17 @@ class _RecipeAddState extends State<RecipeAdd> {
 
                   Padding(
                     padding: const EdgeInsets.only(left: 10),
-                    child:
-
-                  DropdownWidget(
-                    onChanged: (val) {
-                      setState(() {
-                        selectedNoOfServ = val;
-                      });
-                    },
-                    title: "",
-                    items: const [
-                      "1",
-                      "2",
-                      "3",
-                      "4",
-                      "5",
-                      "6",
-                      "7"
-                    ],
-                    selectedValue:
-                    selectedNoOfServ,
-                  ),),
+                    child: DropdownWidget(
+                      onChanged: (val) {
+                        setState(() {
+                          selectedNoOfServ = val;
+                        });
+                      },
+                      title: "",
+                      items: const ["1", "2", "3", "4", "5", "6", "7"],
+                      selectedValue: selectedNoOfServ,
+                    ),
+                  ),
                   const SizedBox(
                     height: 5,
                   ),
@@ -397,24 +391,22 @@ class _RecipeAddState extends State<RecipeAdd> {
                     style: TextStyle(fontSize: 16),
                   ),
 
-              Padding(
-                padding: const EdgeInsets.only(left: 10),
-                child:DropdownWidget(
-                    onChanged: (val) {
-                    },
-                    title: "",
-                    items: const [
-                      "G",
-                      "KG",
-                      "ML",
-                      "L",
-                      "Cup",
-                      "tbl spoon",
-                      "t spoon"
-                    ],
-                    selectedValue:
-                    selectedMeasurement,
-                  )),
+                  Padding(
+                      padding: const EdgeInsets.only(left: 10),
+                      child: DropdownWidget(
+                        onChanged: (val) {},
+                        title: "",
+                        items: const [
+                          "G",
+                          "KG",
+                          "ML",
+                          "L",
+                          "Cup",
+                          "tbl spoon",
+                          "t spoon"
+                        ],
+                        selectedValue: selectedMeasurement,
+                      )),
                   const SizedBox(
                     height: 20,
                   ),
@@ -430,18 +422,20 @@ class _RecipeAddState extends State<RecipeAdd> {
                       borderRadius: BorderRadius.circular(10.0),
                     ),
                     child: ElevatedButton(
-                        onPressed: _isDisable? null :() {
-                        if (_recipeNameCon.text == "") {
-                          MyToast.showError("Please enter recipe name");
-                          return;
-                        }
-                        if (ingredients.length == 0) {
-                          MyToast.showError("Please add ingredient");
-                          return;
-                        }
+                      onPressed: _isDisable
+                          ? null
+                          : () {
+                              if (_recipeNameCon.text == "") {
+                                MyToast.showError("Please enter recipe name");
+                                return;
+                              }
+                              if (ingredients.length == 0) {
+                                MyToast.showError("Please add ingredient");
+                                return;
+                              }
 
-                        saveRecipe();
-                      },
+                              saveRecipe();
+                            },
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.transparent, elevation: 0),
                       child: const Text(

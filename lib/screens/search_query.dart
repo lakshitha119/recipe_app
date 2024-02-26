@@ -3,9 +3,9 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:recipe_app/components/recipe_card.dart';
-import 'package:recipe_app/screens/nutrition_view.dart';
-import 'package:recipe_app/screens/search_query_add.dart';
+import '../components/recipe_card.dart';
+import '../screens/nutrition_view.dart';
+import '../screens/search_query_add.dart';
 
 import '../components/circle_loader.dart';
 import '../components/meal_card.dart';
@@ -112,9 +112,9 @@ class _SearchQueryState extends State<SearchQuery> {
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           // Add your action here
-          final result = await Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => const SearchQueryAdd()));
-          if(result){
+          final result = await Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => const SearchQueryAdd()));
+          if (result) {
             // loadData();
           }
         },

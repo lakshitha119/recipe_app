@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:recipe_app/screens/recipe_view.dart';
+import '../screens/recipe_view.dart';
 
 import '../screens/nutrition_view.dart';
 

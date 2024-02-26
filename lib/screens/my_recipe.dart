@@ -3,9 +3,9 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:recipe_app/components/recipe_card.dart';
-import 'package:recipe_app/screens/nutrition_view.dart';
-import 'package:recipe_app/screens/recipe_add.dart';
+import '../components/recipe_card.dart';
+import '../screens/nutrition_view.dart';
+import '../screens/recipe_add.dart';
 
 import '../components/circle_loader.dart';
 import '../services/api.dart';
@@ -41,8 +41,8 @@ class _MyRecipeState extends State<MyRecipe> {
     });
     allFilterList = [];
 
-    final value = await APIManager()
-        .getRequest(Constant.domain + "/api/v1/Recipe/GetByUserName/Lakshitha119");
+    final value = await APIManager().getRequest(
+        Constant.domain + "/api/v1/Recipe/GetByUserName/Lakshitha119");
     if (value != null && value['results'] != null) {
       CircleLoader.hideLoader(context);
 
@@ -96,9 +96,9 @@ class _MyRecipeState extends State<MyRecipe> {
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           // Add your action here
-          final result = await Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => const RecipeAdd()));
-          if(result){
+          final result = await Navigator.of(context)
+              .push(MaterialPageRoute(builder: (context) => const RecipeAdd()));
+          if (result) {
             loadData();
           }
         },
