@@ -59,7 +59,7 @@ class _LoginState extends State<Login> {
         final SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.setString("userid", res["results"]["id"]);
         prefs.setString("email", res["results"]["email"]);
-        Navigator.push(
+        Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (_) => BottomTabBar()));
       } else {
         MyToast.showError("Login Failed!");
