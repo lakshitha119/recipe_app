@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
@@ -102,12 +102,12 @@ class _RecipeAddState extends State<RecipeAdd> {
     Timer.run(() {
       CircleLoader.showCustomDialog(context);
     });
-
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
     var data = {
       "name": _recipeNameCon.text,
       "description": "none",
       "ingredients": ingredients,
-      "userId": "Lakshitha119",
+      "userId": prefs.getString("userid"),
       "servesFor": selectedNoOfServ
     };
     await APIManager()

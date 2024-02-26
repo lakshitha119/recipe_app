@@ -8,7 +8,7 @@ import '../utils/constant.dart';
 import '../components/circle_loader.dart';
 import '../components/dropdown_widget.dart';
 import 'package:intl/intl.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import '../data/food_data.dart';
 import '../data/recipe_data.dart';
 import '../utils/toast.dart';
@@ -86,9 +86,10 @@ class _BuildMealState extends State<BuildMeal> {
     Timer.run(() {
       CircleLoader.showCustomDialog(context);
     });
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
     allFilterList = [];
-    final value = await APIManager().getRequest(
-        Constant.domain + "/api/v1/Recipe/GetByUserName/Lakshitha119");
+    final value = await APIManager().getRequest(Constant.domain +
+        "/api/v1/Recipe/GetByUserName/${prefs.getString("userid")}");
     if (value != null && value['results'] != null) {
       CircleLoader.hideLoader(context);
       if (value['results'] != 0) {
@@ -104,6 +105,7 @@ class _BuildMealState extends State<BuildMeal> {
   }
 
   saveMeal() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       _isDisable = true;
     });
@@ -116,7 +118,7 @@ class _BuildMealState extends State<BuildMeal> {
       "mealDate": _dateController.text,
       "description": "none",
       "recipies": recipeList,
-      "userId": "Lakshitha119"
+      "userId": prefs.getString("userid")
     };
 
     APIManager().postRequest(Constant.domain + "/api/Meals", data).then((res) {

@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import '../components/recipe_card.dart';
 import '../screens/build_meal.dart';
 import '../screens/nutrition_view.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import '../components/circle_loader.dart';
 import '../components/meal_card.dart';
 import '../services/api.dart';
@@ -41,9 +41,9 @@ class _MyMealState extends State<MyMeal> {
       CircleLoader.showCustomDialog(context);
     });
     allFilterList = [];
-
-    final value = await APIManager()
-        .getRequest(Constant.domain + "/api/Meals/GetByUserName/Lakshitha119");
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final value = await APIManager().getRequest(Constant.domain +
+        "/api/Meals/GetByUserName/${prefs.getString("userid")}");
     if (value != null && value['results'] != null) {
       CircleLoader.hideLoader(context);
 

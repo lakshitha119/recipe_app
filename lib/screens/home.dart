@@ -10,7 +10,7 @@ import '../components/circle_loader.dart';
 import '../components/custom_button.dart';
 import '../components/rounded_clickable_icon.dart';
 import 'package:intl/intl.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import '../utils/app_colors.dart';
 import '../utils/indicator.dart';
 import 'bar_chart_sample2.dart';
@@ -91,10 +91,12 @@ class _HomeState extends State<Home> {
     Timer.run(() {
       CircleLoader.showCustomDialog(context);
     });
-
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    print(prefs.getString("userid"));
+    print(prefs.getString("email"));
     APIManager()
         .getRequest(Constant.domain +
-            "/api/Dashboard?userName=Lakshitha119&startDate=" +
+            "/api/Dashboard?userName=${prefs.getString("userid")}&startDate=" +
             _startDateController.text +
             "&endDate=" +
             _endDateController1.text)

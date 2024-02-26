@@ -13,6 +13,7 @@ import '../services/api.dart';
 import '../utils/constant.dart';
 import '../screens/register.dart';
 import '../components/circle_loader.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -46,7 +47,7 @@ class _LoginState extends State<Login> {
     print(data);
     APIManager()
         .postRequest(Constant.domain + "/api/Account/Login", data)
-        .then((res) {
+        .then((res) async {
       print(res);
       setState(() {
         _isDisable = false;
@@ -55,6 +56,9 @@ class _LoginState extends State<Login> {
       if (res["isSucess"]) {
         //need to save user id here
         MyToast.showSuccess("Login success");
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setString("userid", res["results"]["id"]);
+        prefs.setString("email", res["results"]["email"]);
         Navigator.push(
             context, MaterialPageRoute(builder: (_) => BottomTabBar()));
       } else {
