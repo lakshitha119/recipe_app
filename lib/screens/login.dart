@@ -86,7 +86,7 @@ class _LoginState extends State<Login> {
                   child: Container(
                       width: 200,
                       height: 100,
-                      child: Image.asset('assets/images/flutterwave.png')),
+                      child: Image.asset('assets/images/mrnutritionLogo.jpg')),
                 ),
               ),
               Padding(

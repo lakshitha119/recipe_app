@@ -87,7 +87,7 @@ class _RegisterState extends State<Register> {
                   child: Container(
                       width: 200,
                       height: 100,
-                      child: Image.asset('assets/images/nutrition-plan.png')),
+                      child: Image.asset('assets/images/mrnutritionLogo.jpg')),
                 ),
               ),
               Padding(
