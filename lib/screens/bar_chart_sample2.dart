@@ -50,7 +50,7 @@ class BarChartSample2State extends State<BarChartSample2> {
       titles.add(dateDataList[index]["date"]
           .toString()
           .split("T")[0]
-          .replaceAll("2023-", ""));
+          .replaceAll("2024-", ""));
       List<BarChartRodData> barList = [];
       if (dateDataList[index]["nutrients"].length != 0) {
         barList = [];

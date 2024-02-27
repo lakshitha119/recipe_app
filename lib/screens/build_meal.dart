@@ -258,7 +258,7 @@ class _BuildMealState extends State<BuildMeal> {
                             mealType = val;
                           });
                         },
-                        title: "Select Meal Type",
+                        title: "",
                         items: const ["Breakfast", "Lunch", "Dinner"],
                         selectedValue: mealType,
                       )),

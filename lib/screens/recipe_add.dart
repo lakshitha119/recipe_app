@@ -362,53 +362,9 @@ class _RecipeAddState extends State<RecipeAdd> {
                       border: OutlineInputBorder(),
                     ),
                   ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  const Text(
-                    'Select Number of Serving ',
-                    style: TextStyle(fontSize: 16),
-                  ),
 
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10),
-                    child: DropdownWidget(
-                      onChanged: (val) {
-                        setState(() {
-                          selectedNoOfServ = val;
-                        });
-                      },
-                      title: "",
-                      items: const ["1", "2", "3", "4", "5", "6", "7"],
-                      selectedValue: selectedNoOfServ,
-                    ),
-                  ),
                   const SizedBox(
-                    height: 5,
-                  ),
-                  const Text(
-                    'Selected Serving Unit',
-                    style: TextStyle(fontSize: 16),
-                  ),
-
-                  Padding(
-                      padding: const EdgeInsets.only(left: 10),
-                      child: DropdownWidget(
-                        onChanged: (val) {},
-                        title: "",
-                        items: const [
-                          "G",
-                          "KG",
-                          "ML",
-                          "L",
-                          "Cup",
-                          "tbl spoon",
-                          "t spoon"
-                        ],
-                        selectedValue: selectedMeasurement,
-                      )),
-                  const SizedBox(
-                    height: 20,
+                    height: 25,
                   ),
                   //Submit Button
                   Container(
