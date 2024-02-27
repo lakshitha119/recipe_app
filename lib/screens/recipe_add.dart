@@ -83,14 +83,44 @@ class _RecipeAddState extends State<RecipeAdd> {
     return allFilterList;
   }
 
+  GetQtyinGorMl(String unit, String amount) {
+    switch (unit) {
+      case "G" || "ML":
+        return int.tryParse(amount);
+      case "KG" || "L":
+        return ((double.tryParse(amount) ?? 0) * 1000);
+      case "Cup":
+        return ((double.tryParse(amount) ?? 0) * 236.6);
+      case "tbl spoon":
+        return ((double.tryParse(amount) ?? 0) * 14.8);
+      case "t spoon":
+        return ((double.tryParse(amount) ?? 0) * 5);
+    }
+  }
+
+  GetUnitGorMl(String unit) {
+    switch (unit) {
+      case "G" || "KG":
+        return "G";
+      case "ML" || "L" || "Cup" || "tbl spoon" || "t spoon":
+        return "ML";
+    }
+  }
+
   addIngObj() {
     _recipeIngCon.text +=
         "${selectedIngName + " " + _ingAmountCon.text}$selectedMeasurement\n";
     // ingredients.
+    var data = {
+      "fdcId": selectedIngId,
+      "addedQty": GetQtyinGorMl(selectedMeasurement, _ingAmountCon.text),
+      "unit": GetUnitGorMl(selectedMeasurement)
+    };
+    print(data);
     ingredients.add({
       "fdcId": selectedIngId,
-      "addedQty": _ingAmountCon.text,
-      "unit": selectedMeasurement
+      "addedQty": GetQtyinGorMl(selectedMeasurement, _ingAmountCon.text),
+      "unit": GetUnitGorMl(selectedMeasurement)
     });
     Navigator.of(context).pop();
   }
@@ -108,7 +138,7 @@ class _RecipeAddState extends State<RecipeAdd> {
       "description": "none",
       "ingredients": ingredients,
       "userId": prefs.getString("userid"),
-      "servesFor": selectedNoOfServ
+      "servesFor": 0
     };
     await APIManager()
         .postRequest(Constant.domain + "/api/v1/Recipe", data)
@@ -197,132 +227,162 @@ class _RecipeAddState extends State<RecipeAdd> {
                             builder: (BuildContext context) {
                               return StatefulBuilder(
                                   builder: (context, setState) {
-                                return AlertDialog(
-                                  content: Stack(
-                                    clipBehavior: Clip.none,
-                                    children: <Widget>[
-                                      Positioned(
-                                        right: -30,
-                                        top: -30,
-                                        child: InkResponse(
-                                          onTap: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                          child: const CircleAvatar(
-                                            backgroundColor: Colors.red,
-                                            child: Icon(Icons.close),
-                                          ),
-                                        ),
-                                      ),
-                                      Form(
-                                        key: _formKey,
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          mainAxisSize: MainAxisSize.min,
+                                return Container(
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      AlertDialog(
+                                        content: Stack(
+                                          clipBehavior: Clip.none,
                                           children: <Widget>[
-                                            Padding(
-                                              padding: const EdgeInsets.all(0),
-                                              child: TypeAheadField<FoodData>(
-                                                suggestionsCallback: (value) {
-                                                  print(value);
-                                                  return fetchSuggestions(
-                                                      value);
+                                            Positioned(
+                                              right: -30,
+                                              top: -30,
+                                              child: InkResponse(
+                                                onTap: () {
+                                                  Navigator.of(context).pop();
                                                 },
-                                                builder: (context, controller,
-                                                    focusNode) {
-                                                  return TextField(
-                                                      controller: controller,
-                                                      focusNode: focusNode,
-                                                      autofocus: true,
-                                                      decoration: const InputDecoration(
-                                                          border:
-                                                              OutlineInputBorder(),
-                                                          labelText:
-                                                              'Search For Ingredient'));
-                                                },
-                                                itemBuilder:
-                                                    (context, foodData) {
-                                                  return ListTile(
-                                                    title: Text(foodData.name),
-                                                  );
-                                                },
-                                                onSelected: (city) {
-                                                  setState(() {
-                                                    selectedIngName = city.name;
-                                                    selectedIngId = city.fdcId;
-                                                  });
-                                                },
+                                                child: const CircleAvatar(
+                                                  backgroundColor: Colors.red,
+                                                  child: Icon(Icons.close),
+                                                ),
                                               ),
                                             ),
-                                            Text(
-                                              selectedIngName,
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.w800),
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.all(0),
-                                              child: DropdownWidget(
-                                                onChanged: (val) {
-                                                  setState(() {
-                                                    selectedAmount = val;
-                                                  });
-                                                },
-                                                title: "Select Amount",
-                                                items: const [
-                                                  "1",
-                                                  "2",
-                                                  "3",
-                                                  "4",
-                                                  "5",
-                                                  "6",
-                                                  "7"
-                                                ],
-                                                selectedValue: selectedAmount,
-                                              ),
-                                            ),
-                                            Padding(
-                                                padding:
-                                                    const EdgeInsets.all(0),
-                                                child: DropdownWidget(
-                                                  onChanged: (val) {
-                                                    setState(() {
-                                                      selectedMeasurement = val;
-                                                    });
-                                                  },
-                                                  title: "Select Measurement",
-                                                  items: const [
-                                                    "G",
-                                                    "KG",
-                                                    "ML",
-                                                    "L",
-                                                    "Cup",
-                                                    "tbl spoon",
-                                                    "t spoon"
-                                                  ],
-                                                  selectedValue:
-                                                      selectedMeasurement,
-                                                )),
-                                            Padding(
-                                              padding: const EdgeInsets.all(0),
-                                              child: ElevatedButton(
-                                                child: const Text('Add'),
-                                                onPressed: () {
-                                                  // if (_formKey.currentState!
-                                                  //     .validate()) {
-                                                  //   _formKey.currentState!
-                                                  //       .save();
-                                                  // }
+                                            Form(
+                                              key: _formKey,
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: <Widget>[
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(0),
+                                                    child: TypeAheadField<
+                                                        FoodData>(
+                                                      suggestionsCallback:
+                                                          (value) {
+                                                        print(value);
+                                                        return fetchSuggestions(
+                                                            value);
+                                                      },
+                                                      builder: (context,
+                                                          controller,
+                                                          focusNode) {
+                                                        return TextField(
+                                                            controller:
+                                                                controller,
+                                                            focusNode:
+                                                                focusNode,
+                                                            autofocus: true,
+                                                            decoration: const InputDecoration(
+                                                                border:
+                                                                    OutlineInputBorder(),
+                                                                labelText:
+                                                                    'Search For Ingredient'));
+                                                      },
+                                                      itemBuilder:
+                                                          (context, foodData) {
+                                                        return ListTile(
+                                                          title: Text(
+                                                              foodData.name),
+                                                        );
+                                                      },
+                                                      onSelected: (city) {
+                                                        setState(() {
+                                                          selectedIngName =
+                                                              city.name;
+                                                          selectedIngId =
+                                                              city.fdcId;
+                                                        });
+                                                      },
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    selectedIngName,
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w800),
+                                                  ),
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(0),
+                                                    child: Column(
+                                                      children: [
+                                                        const Text(
+                                                          'Amount',
+                                                          style: TextStyle(
+                                                              fontSize: 16),
+                                                        ),
+                                                        TextField(
+                                                          controller:
+                                                              _ingAmountCon,
+                                                          // Set maxLines to null for multiline input
+                                                          keyboardType:
+                                                              TextInputType
+                                                                  .numberWithOptions(
+                                                                      decimal:
+                                                                          true),
+                                                          decoration:
+                                                              const InputDecoration(
+                                                            border:
+                                                                OutlineInputBorder(),
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              0),
+                                                      child: DropdownWidget(
+                                                        onChanged: (val) {
+                                                          setState(() {
+                                                            selectedMeasurement =
+                                                                val;
+                                                          });
+                                                        },
+                                                        title:
+                                                            "Select Measurement",
+                                                        items: const [
+                                                          "G",
+                                                          "KG",
+                                                          "ML",
+                                                          "L",
+                                                          "Cup",
+                                                          "tbl spoon",
+                                                          "t spoon"
+                                                        ],
+                                                        selectedValue:
+                                                            selectedMeasurement,
+                                                      )),
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(0),
+                                                    child: ElevatedButton(
+                                                      child: const Text('Add'),
+                                                      onPressed: () {
+                                                        // if (_formKey.currentState!
+                                                        //     .validate()) {
+                                                        //   _formKey.currentState!
+                                                        //       .save();
+                                                        // }
 
-                                                  if (selectedIngName != "" &&
-                                                      selectedIngId != 0) {
-                                                    addIngObj();
-                                                  } else {}
-                                                },
+                                                        if (selectedIngName !=
+                                                                "" &&
+                                                            selectedIngId !=
+                                                                0) {
+                                                          addIngObj();
+                                                        } else {}
+                                                      },
+                                                    ),
+                                                  )
+                                                ],
                                               ),
-                                            )
+                                            ),
                                           ],
                                         ),
                                       ),

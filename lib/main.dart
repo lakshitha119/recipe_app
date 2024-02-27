@@ -3,6 +3,7 @@ import '../screens/home.dart';
 
 import 'components/bottom_navbar.dart';
 import 'screens/login.dart';
+import 'package:animated_splash_screen/animated_splash_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -37,7 +38,11 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       // home:  BottomTabBar(),
-      home: Login(),
+      home: AnimatedSplashScreen(
+        splash: 'assets/images/logo.jpg',
+        nextScreen: Login(),
+        splashTransition: SplashTransition.fadeTransition,
+      ),
     );
   }
 }
