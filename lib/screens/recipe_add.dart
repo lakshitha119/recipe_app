@@ -73,7 +73,8 @@ class _RecipeAddState extends State<RecipeAdd> {
           allFilterList.add(FoodData(
               fdcId: item['fdcId'] as int,
               name: item['name'] as String,
-              category: item['category']));
+              category: item['category'],
+              brandName: item['brandName']));
         }
         return allFilterList;
       } else {
@@ -286,9 +287,28 @@ class _RecipeAddState extends State<RecipeAdd> {
                                                       itemBuilder:
                                                           (context, foodData) {
                                                         return ListTile(
-                                                          title: Text(
-                                                              foodData.name),
-                                                        );
+                                                            title: Column(
+                                                          children: [
+                                                            Text(
+                                                              foodData.name,
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .blue),
+                                                            ),
+                                                            Text(
+                                                                foodData
+                                                                    .category,
+                                                                style: TextStyle(
+                                                                    color: Colors
+                                                                        .black)),
+                                                            Text(
+                                                                foodData
+                                                                    .brandName,
+                                                                style: TextStyle(
+                                                                    color: Colors
+                                                                        .black))
+                                                          ],
+                                                        ));
                                                       },
                                                       onSelected: (city) {
                                                         setState(() {
