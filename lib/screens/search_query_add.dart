@@ -1,11 +1,12 @@
 import 'dart:async';
 
+import 'package:MrNutritions/components/circle_loader.dart';
+import 'package:MrNutritions/screens/search_query.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../components/dropdown_widget.dart';
 import '../utils/toast.dart';
-
 
 class SearchQueryAdd extends StatefulWidget {
   const SearchQueryAdd({Key? key}) : super(key: key);
@@ -16,10 +17,9 @@ class SearchQueryAdd extends StatefulWidget {
 
 class _SearchQueryAddState extends State<SearchQueryAdd> {
   List<dynamic> data = []; //ApiPass Body Data Holder
-  String selectedValue = "";
-  String selectedMeasurement = "G";
-  String selectedOp = "1";
-  int selectedId = 0;
+  String selectedOrder = "Ascending Order";
+  String selectedNutrtionName = "Protein";
+  String selectedcategory = "Cheese";
 
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -38,19 +38,20 @@ class _SearchQueryAddState extends State<SearchQueryAdd> {
 
   void onChanged(String newValue) {
     setState(() {
-      selectedMeasurement = newValue;
-      selectedValue = selectedValue;
-      selectedId = selectedId;
+      selectedNutrtionName = newValue;
+      selectedOrder = newValue;
+      selectedcategory = newValue;
     });
 
-    print('Selected value: $selectedMeasurement');
+    print('Selected value: $selectedNutrtionName');
   }
 
-
-
-
   search() async {
-
+    final result = await Navigator.of(context)
+        .push(MaterialPageRoute(builder: (context) => const SearchQuery()));
+    // if (result) {
+    //   loadData();
+    // }
   }
 
   @override
@@ -92,109 +93,78 @@ class _SearchQueryAddState extends State<SearchQueryAdd> {
                   //First Selection
                   //Spacer
 
-                  const Text(
-                    'Serving Size',
-                    style: TextStyle(fontSize: 16),
-                  ),
-
-                  TextField(
-                    controller: _servSizeCon,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
                   const SizedBox(
-                    height: 5,
+                    height: 3,
                   ),
 
-                  const Text(
-                    'Select Measurement ',
-                    style: TextStyle(fontSize: 16),
-                  ),
-
-                  Padding(
-                      padding: const EdgeInsets.only(left: 10),
-                      child:DropdownWidget(
-                        onChanged: (val) {
-                          setState(() {
-                            selectedMeasurement = val;
-                          });
-                        },
-                        title: "",
-                        items: const [
-                          "G",
-                          "KG",
-                          "ML",
-                          "L",
-                          "Cup",
-                          "tbl spoon",
-                          "t spoon"
-                        ],
-                        selectedValue:
-                        selectedMeasurement,
-                      )),
                   const Text(
                     'Nutrition Name',
                     style: TextStyle(fontSize: 16),
                   ),
-
-                  TextField(
-                    enabled: false,
-                    controller: _nutNameCon,
-                    maxLines: null, // Set maxLines to null for multiline input
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                    ),
+                  DropdownWidget(
+                    onChanged: (val) {
+                      setState(() {
+                        selectedNutrtionName = val;
+                      });
+                    },
+                    title: "",
+                    items: const [
+                      "Protein",
+                      "Lipid ",
+                      "Carbohydrate",
+                      "Cholesterol",
+                      "Energy"
+                    ],
+                    selectedValue: selectedNutrtionName,
                   ),
                   const SizedBox(
-                    height: 5,
+                    height: 3,
                   ),
+
                   const Text(
-                    'Nutrition Value',
+                    'Food category',
                     style: TextStyle(fontSize: 16),
                   ),
-
-                  TextField(
-                    enabled: false,
-                    controller: _nutValCon,
-                    maxLines: null, // Set maxLines to null for multiline input
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                    ),
+                  DropdownWidget(
+                    onChanged: (val) {
+                      setState(() {
+                        selectedcategory = val;
+                      });
+                    },
+                    title: "",
+                    items: const [
+                      "Cheese",
+                      "Ice Cream & Frozen Yogurt",
+                      "Breads & Buns",
+                      "Cookies & Biscuits",
+                      "Fruit & Vegetable Juice, Nectars & Fruit Drinks",
+                      "Vegetables"
+                    ],
+                    selectedValue: selectedcategory,
                   ),
                   const SizedBox(
-                    height: 5,
+                    height: 3,
                   ),
                   const Text(
-                    'Operator',
+                    'Sorting Order',
                     style: TextStyle(fontSize: 16),
                   ),
 
                   Padding(
                     padding: const EdgeInsets.only(left: 5),
-                    child:
-
-                    DropdownWidget(
+                    child: DropdownWidget(
                       onChanged: (val) {
                         setState(() {
-                          selectedOp = val;
+                          selectedOrder = val;
                         });
                       },
                       title: "",
-                      items: const [
-                        "1",
-                        "2",
-                        "3",
-                        "4",
-                        "5",
-                        "6",
-                        "7"
-                      ],
-                      selectedValue:
-                      selectedOp,
-                    ),),
+                      items: const ["Ascending Order", "Descending Order"],
+                      selectedValue: selectedOrder,
+                    ),
+                  ),
                   const SizedBox(
-                    height: 5,
+                    height: 3,
                   ),
 
                   const SizedBox(
@@ -212,11 +182,11 @@ class _SearchQueryAddState extends State<SearchQueryAdd> {
                       borderRadius: BorderRadius.circular(10.0),
                     ),
                     child: ElevatedButton(
-                      onPressed: _isDisable? null :() {
-
-
-                        search();
-                      },
+                      onPressed: _isDisable
+                          ? null
+                          : () {
+                              search();
+                            },
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.transparent, elevation: 0),
                       child: const Text(

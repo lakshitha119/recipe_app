@@ -87,11 +87,11 @@ class _MyMealState extends State<MyMeal> {
         itemCount: allFilterList.length,
         itemBuilder: (context, index) {
           return ListTile(
-            title: MealCard(
-                id: allFilterList[index]["id"],
-                title: allFilterList[index]["name"],
-                desc: allFilterList[index]["mealType"]),
-          );
+              title: MealCard(
+            id: allFilterList[index]["id"],
+            title: (allFilterList[index]["mealDate"].split('T')[0]),
+            desc: allFilterList[index]["mealType"],
+          ));
         },
       ),
       floatingActionButton: FloatingActionButton(

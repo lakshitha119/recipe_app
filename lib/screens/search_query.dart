@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:MrNutritions/components/searchResult.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../components/recipe_card.dart';
@@ -51,7 +52,7 @@ class _SearchQueryState extends State<SearchQuery> {
               width: 1,
             ),
             Text(
-              "Search Query",
+              "Search Query Result",
               style: TextStyle(
                 fontFamily: "Roboto",
                 letterSpacing: 1.0,
@@ -64,61 +65,18 @@ class _SearchQueryState extends State<SearchQuery> {
         ),
         backgroundColor: const Color.fromARGB(255, 0, 23, 147),
       ),
-      body: const SingleChildScrollView(
-          physics: AlwaysScrollableScrollPhysics(),
-          child: Column(
-            children: [
-              Text(
-                'Previous Search Query',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
-              ),
-              TextField(
-                enabled: false,
-                maxLines: 10, // Set maxLines to null for multiline input
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              Column(
-                children: [
-                  Padding(
-                    padding: EdgeInsets.all(8),
-                    child: Row(
-                      children: [
-                        Text(
-                          'Food Name',
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.w800),
-                        ),
-                        Spacer(),
-                        Text(
-                          'N1',
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.w800),
-                        ),
-                        Spacer(),
-                        Text(
-                          'N2',
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.w800),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              )
-            ],
-          )),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          // Add your action here
-          final result = await Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => const SearchQueryAdd()));
-          if (result) {
-            // loadData();
-          }
+      body: ListView.builder(
+        itemCount: 16,
+        itemBuilder: (context, index) {
+          return ListTile(
+            title: SearchResult(
+                description: "AUTHENTIC BARREL RIPENED FETA CHEESE",
+                Protein: "34",
+                Lipid: "90",
+                Carbohydrate: "45",
+                Energy: "38"),
+          );
         },
-        child: Icon(Icons.add),
       ),
     );
   }

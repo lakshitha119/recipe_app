@@ -1,3 +1,4 @@
+import 'package:MrNutritions/screens/search_query_add.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../screens/build_meal.dart';
@@ -37,14 +38,7 @@ class _BottomTabBarState extends State<BottomTabBar> {
                 _currentIndex = index;
               });
             },
-            children: [
-              Home(),
-              // RecipeAdd(),
-              MyRecipe(),
-              MyMeal(),
-              SearchQuery()
-              // BuildMeal(),
-            ]),
+            children: [Home(), MyRecipe(), MyMeal(), SearchQueryAdd()]),
         bottomNavigationBar: BottomNavigationBar(
             selectedItemColor: Color.fromARGB(255, 246, 197, 0),
             unselectedItemColor: Color.fromARGB(255, 173, 0, 0),

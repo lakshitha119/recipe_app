@@ -55,7 +55,7 @@ class MealCard extends StatelessWidget {
                           fontSize: 16.0, fontWeight: FontWeight.bold)),
                   Text(desc,
                       style: TextStyle(
-                          fontSize: 12.0, fontWeight: FontWeight.bold))
+                          fontSize: 14.0, fontWeight: FontWeight.bold))
                 ],
               )),
           Spacer(),

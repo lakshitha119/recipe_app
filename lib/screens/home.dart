@@ -414,7 +414,7 @@ class _HomeState extends State<Home> {
               height: 10.0,
             ), //S
             const Text(
-              'Summery',
+              'Summary',
               style: TextStyle(
                 fontFamily: "Roboto",
                 fontSize: 18.0,
