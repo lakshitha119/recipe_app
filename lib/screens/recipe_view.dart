@@ -144,7 +144,7 @@ class _ViewRecipeState extends State<ViewRecipe> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text("Recipes",
+                  const Text("Food Items",
                       style: TextStyle(
                           fontSize: 25.0, fontWeight: FontWeight.bold)),
                   // const Text("1 serving per container"),

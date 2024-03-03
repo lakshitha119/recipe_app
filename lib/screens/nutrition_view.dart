@@ -66,8 +66,7 @@ class _NutritionViewState extends State<NutritionView> {
                   item["amountByIngredientSize"].toStringAsFixed(2).toString();
               setState(() {
                 nutritionListViews.add(NutritionRow(
-                    title: item["name"] + " " + amount + item["unitName"],
-                    amount: amount));
+                    title: item["name"], amount: amount + item["unitName"]));
                 // nutritionList = nutritionList;
               });
             }
@@ -105,8 +104,8 @@ class _NutritionViewState extends State<NutritionView> {
                         .toString();
                     setState(() {
                       nutritionListViews.add(NutritionRow(
-                          title: item["name"] + " " + amount + item["unitName"],
-                          amount: amount));
+                          title: item["name"],
+                          amount: amount + item["unitName"]));
                       // nutritionList = nutritionList;
                     });
                   }
@@ -144,8 +143,8 @@ class _NutritionViewState extends State<NutritionView> {
                         .toString();
                     setState(() {
                       nutritionListViews.add(NutritionRow(
-                          title: item["name"] + " " + amount + item["unitName"],
-                          amount: amount));
+                          title: item["name"],
+                          amount: amount + item["unitName"]));
                       // nutritionList = nutritionList;
                     });
                   }
@@ -207,8 +206,7 @@ class _NutritionViewState extends State<NutritionView> {
                   Text("Nutrition Facts",
                       style: TextStyle(
                           fontSize: 25.0, fontWeight: FontWeight.bold)),
-                  Text("1 serving per container"),
-                  Text("serving size  1 container (259ml)",
+                  Text("serving size" "total weight",
                       style: TextStyle(
                           fontSize: 16.0, fontWeight: FontWeight.bold)),
                   Divider(
@@ -239,7 +237,7 @@ class _NutritionViewState extends State<NutritionView> {
                       Text("",
                           style: TextStyle(
                               fontSize: 25.0, fontWeight: FontWeight.bold)),
-                      Text("% Daily Value%",
+                      Text("Amount with unit",
                           style: TextStyle(
                               fontSize: 20.0, fontWeight: FontWeight.bold)),
                     ],

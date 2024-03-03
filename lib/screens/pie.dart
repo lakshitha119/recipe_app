@@ -105,7 +105,7 @@ class PieChartSample1State extends State {
   List<PieChartSectionData> showingSections() {
     return List.generate(
       4,
-          (i) {
+      (i) {
         final isTouched = i == touchedIndex;
         const color0 = AppColors.contentColorBlue;
         const color1 = AppColors.contentColorYellow;
@@ -122,9 +122,9 @@ class PieChartSample1State extends State {
               titlePositionPercentageOffset: 0.55,
               borderSide: isTouched
                   ? const BorderSide(
-                  color: AppColors.contentColorWhite, width: 6)
+                      color: AppColors.contentColorWhite, width: 6)
                   : BorderSide(
-                  color: AppColors.contentColorWhite.withOpacity(0)),
+                      color: AppColors.contentColorWhite.withOpacity(0)),
             );
           case 1:
             return PieChartSectionData(
@@ -135,9 +135,9 @@ class PieChartSample1State extends State {
               titlePositionPercentageOffset: 0.55,
               borderSide: isTouched
                   ? const BorderSide(
-                  color: AppColors.contentColorWhite, width: 6)
+                      color: AppColors.contentColorWhite, width: 6)
                   : BorderSide(
-                  color: AppColors.contentColorWhite.withOpacity(0)),
+                      color: AppColors.contentColorWhite.withOpacity(0)),
             );
           case 2:
             return PieChartSectionData(
@@ -148,9 +148,9 @@ class PieChartSample1State extends State {
               titlePositionPercentageOffset: 0.6,
               borderSide: isTouched
                   ? const BorderSide(
-                  color: AppColors.contentColorWhite, width: 6)
+                      color: AppColors.contentColorWhite, width: 6)
                   : BorderSide(
-                  color: AppColors.contentColorWhite.withOpacity(0)),
+                      color: AppColors.contentColorWhite.withOpacity(0)),
             );
           case 3:
             return PieChartSectionData(
@@ -161,9 +161,9 @@ class PieChartSample1State extends State {
               titlePositionPercentageOffset: 0.55,
               borderSide: isTouched
                   ? const BorderSide(
-                  color: AppColors.contentColorWhite, width: 6)
+                      color: AppColors.contentColorWhite, width: 6)
                   : BorderSide(
-                  color: AppColors.contentColorWhite.withOpacity(0)),
+                      color: AppColors.contentColorWhite.withOpacity(0)),
             );
           default:
             throw Error();

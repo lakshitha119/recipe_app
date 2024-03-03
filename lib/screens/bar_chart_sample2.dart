@@ -116,8 +116,9 @@ class BarChartSample2State extends State<BarChartSample2> {
                         // String tooltipText = 'Y:${rodIndex} ${groupIndex}';
                         var data =
                             dateDataList[groupIndex]["nutrients"][rodIndex];
-                        String tooltipText =
-                            data["name"] + " - " + data["amount"].toString();
+                        String tooltipText = data["name"] +
+                            " - " +
+                            data["amount"].toStringAsFixed(2).toString();
 
                         return BarTooltipItem(
                           tooltipText,

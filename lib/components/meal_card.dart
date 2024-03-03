@@ -80,7 +80,7 @@ class MealCard extends StatelessWidget {
                     style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.transparent, elevation: 0),
                     child: const Text(
-                      'Recipes',
+                      'Food Items',
                       style: TextStyle(
                         fontFamily: "Roboto",
                         fontSize: 14.0,

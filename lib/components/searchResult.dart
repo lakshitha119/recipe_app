@@ -56,7 +56,9 @@ class SearchResult extends StatelessWidget {
                 children: [
                   Text("$description",
                       style: const TextStyle(
-                          fontSize: 16.0, fontWeight: FontWeight.bold)),
+                          color: blue,
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.bold)),
                   Text("Protein : $Protein",
                       style: const TextStyle(
                           fontSize: 15.0, fontWeight: FontWeight.bold)),
