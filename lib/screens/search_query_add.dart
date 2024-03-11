@@ -99,7 +99,7 @@ class _SearchQueryAddState extends State<SearchQueryAdd> {
 
                   const Text(
                     'Nutrition Name',
-                    style: TextStyle(fontSize: 16),
+                    style: TextStyle(fontSize: 16, color: blue),
                   ),
                   DropdownWidget(
                     onChanged: (val) {
@@ -123,7 +123,7 @@ class _SearchQueryAddState extends State<SearchQueryAdd> {
 
                   const Text(
                     'Food category',
-                    style: TextStyle(fontSize: 16),
+                    style: TextStyle(fontSize: 16, color: blue),
                   ),
                   DropdownWidget(
                     onChanged: (val) {
@@ -147,7 +147,7 @@ class _SearchQueryAddState extends State<SearchQueryAdd> {
                   ),
                   const Text(
                     'Sorting Order',
-                    style: TextStyle(fontSize: 16),
+                    style: TextStyle(fontSize: 16, color: blue),
                   ),
 
                   Padding(
