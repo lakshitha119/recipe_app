@@ -6,18 +6,10 @@ import '../screens/nutrition_view.dart';
 
 class SearchResult extends StatelessWidget {
   final String description;
-  final String Protein;
-  final String Lipid;
-  final String Carbohydrate;
-  final String Energy;
+  final List<dynamic> Nutirions;
 
   const SearchResult(
-      {Key? key,
-      required this.description,
-      required this.Protein,
-      required this.Lipid,
-      required this.Carbohydrate,
-      required this.Energy})
+      {Key? key, required this.description, required this.Nutirions})
       : super(key: key);
   static const blue = Color.fromARGB(255, 0, 23, 147);
 
@@ -49,7 +41,7 @@ class SearchResult extends StatelessWidget {
             width: 5,
           ),
           Container(
-              width: MediaQuery.of(context).size.width / 100 * 50,
+              width: MediaQuery.of(context).size.width / 100 * 70,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -59,24 +51,28 @@ class SearchResult extends StatelessWidget {
                           color: blue,
                           fontSize: 16.0,
                           fontWeight: FontWeight.bold)),
-                  Text("Protein : $Protein",
-                      style: const TextStyle(
-                          fontSize: 15.0, fontWeight: FontWeight.bold)),
-                  Text("Lipid : $Lipid",
-                      style: const TextStyle(
-                          fontSize: 15.0, fontWeight: FontWeight.bold)),
-                  Text("Carbohydrate : $Carbohydrate",
-                      style: const TextStyle(
-                          fontSize: 15.0, fontWeight: FontWeight.bold)),
-                  Text("Energy : $Energy",
-                      style: const TextStyle(
-                          fontSize: 15.0, fontWeight: FontWeight.bold))
+                  ListView.builder(
+                    padding: EdgeInsets.zero,
+                    scrollDirection: Axis.vertical,
+                    shrinkWrap: true,
+                    itemCount: Nutirions.length,
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        title: Text(
+                            Nutirions[index]["nutrientName"] +
+                                " : " +
+                                Nutirions[index]["value"].toString() +
+                                Nutirions[index]["unitName"],
+                            style: const TextStyle(
+                                fontSize: 15.0, fontWeight: FontWeight.bold)),
+                      );
+                    },
+                  ),
                 ],
               )),
           // SizedBox(
           //   width: 10,
           // ),
-          const Spacer(),
         ],
       )),
     );

@@ -47,10 +47,15 @@ class _SearchQueryAddState extends State<SearchQueryAdd> {
   }
 
   search() async {
-    final result = await Navigator.of(context)
-        .push(MaterialPageRoute(builder: (context) => const SearchQuery()));
+    final result = await Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => SearchQuery(
+              selectedOrder: selectedOrder,
+              selectedcategory: selectedcategory,
+              selectedNutrtionName: selectedNutrtionName,
+            )));
     // if (result) {
     //   loadData();
+    print("order" + selectedOrder);
     // }
   }
 
@@ -110,8 +115,8 @@ class _SearchQueryAddState extends State<SearchQueryAdd> {
                     title: "",
                     items: const [
                       "Protein",
-                      "Lipid ",
-                      "Carbohydrate",
+                      "Total lipid (fat)",
+                      "Carbohydrate, by difference",
                       "Cholesterol",
                       "Energy"
                     ],
