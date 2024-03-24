@@ -58,6 +58,18 @@ class _MyMealState extends State<MyMeal> {
     }
   }
 
+  deleteData(String mealId) async {
+    Timer.run(() {
+      CircleLoader.showCustomDialog(context);
+    });
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final value = await APIManager()
+        .deleteRequest(Constant.domain + "/api/Meals?id=${mealId}");
+    if (value != null && value['isSucess'] != null) {
+      CircleLoader.hideLoader(context);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -86,12 +98,20 @@ class _MyMealState extends State<MyMeal> {
       body: ListView.builder(
         itemCount: allFilterList.length,
         itemBuilder: (context, index) {
-          return ListTile(
-              title: MealCard(
-            id: allFilterList[index]["id"],
-            title: (allFilterList[index]["mealDate"].split('T')[0]),
-            desc: allFilterList[index]["mealType"],
-          ));
+          return Dismissible(
+            key: Key(allFilterList[index]["id"]),
+            background: Container(child: Icon(Icons.delete), color: Colors.red),
+            onDismissed: (direction) {
+              allFilterList.removeAt(index);
+              deleteData(allFilterList[index]["id"]);
+            },
+            child: ListTile(
+                title: MealCard(
+              id: allFilterList[index]["id"],
+              title: (allFilterList[index]["mealDate"].split('T')[0]),
+              desc: allFilterList[index]["mealType"],
+            )),
+          );
         },
       ),
       floatingActionButton: FloatingActionButton(

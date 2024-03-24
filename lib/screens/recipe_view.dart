@@ -58,7 +58,8 @@ class _ViewRecipeState extends State<ViewRecipe> {
                   listViews.add(RecipeCard(
                     id: item["id"],
                     title: item["name"],
-                    desc: " ",
+                    desc: item["servedWeight"].toString() +
+                        item["servedWeightUnit"],
                     mealId: res["results"]["id"],
                     type: widget.type,
                   ));
@@ -85,7 +86,8 @@ class _ViewRecipeState extends State<ViewRecipe> {
                   listViews.add(RecipeCard(
                     id: item["id"],
                     title: item["name"],
-                    desc: " ",
+                    desc: item["servedWeight"].toString() +
+                        item["servedWeightUnit"],
                     mealId: res["results"]["id"],
                     type: widget.type,
                   ));

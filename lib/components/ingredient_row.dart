@@ -26,7 +26,7 @@ class IngredientRow extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Container(
-                width: MediaQuery.of(context).size.width / 100 * 70,
+                width: MediaQuery.of(context).size.width / 100 * 60,
                 child: Text(title,
                     softWrap: true,
                     style: TextStyle(

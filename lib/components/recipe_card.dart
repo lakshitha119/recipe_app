@@ -54,12 +54,23 @@ class RecipeCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title,
-                      style: const TextStyle(
-                          fontSize: 15.0, fontWeight: FontWeight.bold)),
-                  Text(desc,
-                      style: const TextStyle(
-                          fontSize: 15.0, fontWeight: FontWeight.bold))
+                  Row(
+                    children: [
+                      Text(title,
+                          style: const TextStyle(
+                              fontSize: 15.0, fontWeight: FontWeight.bold)),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Text("Quantity :",
+                          style: TextStyle(
+                              fontSize: 10.0, fontWeight: FontWeight.bold)),
+                      Text(desc,
+                          style: const TextStyle(
+                              fontSize: 14.0, fontWeight: FontWeight.bold)),
+                    ],
+                  ),
                 ],
               )),
           // SizedBox(

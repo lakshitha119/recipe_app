@@ -89,7 +89,8 @@ class _MyRecipeState extends State<MyRecipe> {
             title: RecipeCard(
                 id: allFilterList[index]["id"],
                 title: allFilterList[index]["name"],
-                desc: " "),
+                desc: allFilterList[index]["totalWeight"].toString() +
+                    allFilterList[index]["totalWeightUnit"]),
           );
         },
       ),

@@ -34,7 +34,7 @@ class _SearchQueryState extends State<SearchQuery> {
   String SelectedValueHolder = ""; //Dropdown Button Selected Value Holder
 
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-
+  String category = "";
   late Timer t;
 
   @override
@@ -65,14 +65,34 @@ class _SearchQueryState extends State<SearchQuery> {
       sortingOrder = 1;
     }
     print("order" + sortingOrder.toString());
-    final value = await APIManager().getRequest(Constant.domain +
-//"/api/SearchQuery?category=Cheese&nutrtionName=Protein&sortingOrder=0");
+    if (widget.selectedcategory == "Cheese") {
+      category = "Cheese";
+    }
+    if (widget.selectedcategory == "Vegetables") {
+      category = "Vegetables";
+    }
+    if (widget.selectedcategory == "Ice Cream & Frozen Yogurt") {
+      category = "Ice%20Cream%20%26%20Frozen%20Yogurt";
+    }
+    if (widget.selectedcategory == "Breads & Buns") {
+      category = "Breads%20%26%20Buns";
+    }
+    if (widget.selectedcategory == "Cookies & Biscuits") {
+      category = "Cookies%20%26%20Biscuits";
+    }
+    if (widget.selectedcategory ==
+        "Fruit & Vegetable Juice, Nectars & Fruit Drinks") {
+      category =
+          "Fruit%20%26%20Vegetable%20Juice%2C%20Nectars%20%26%20Fruit%20Drinks";
+    }
+    final value = await APIManager().getRequest((Constant.domain +
         "/api/SearchQuery?category=" +
-        widget.selectedcategory +
+        category +
         "&nutrtionName=" +
         widget.selectedNutrtionName +
         "&sortingOrder=" +
-        sortingOrder.toString());
+        sortingOrder.toString()));
+    print(Uri.encodeFull(widget.selectedcategory));
     if (value != null && value['results'] != null) {
       CircleLoader.hideLoader(context);
 

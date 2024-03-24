@@ -66,7 +66,9 @@ class _ViewIngredientState extends State<ViewIngredient> {
                 setState(() {
                   listViews.add(IngredientRow(
                       title: item["name"],
-                      size: item["includedSizeInGrams"].toString() +
+                      size: item["includedSizeInGrams"]
+                              .toStringAsFixed(2)
+                              .toString() +
                           item["incudedUnit"]));
                 });
               }
@@ -91,7 +93,9 @@ class _ViewIngredientState extends State<ViewIngredient> {
                 setState(() {
                   listViews.add(IngredientRow(
                       title: item["name"],
-                      size: item["includedSizeInGrams"].toString() +
+                      size: item["includedSizeInGrams"]
+                              .toStringAsFixed(2)
+                              .toString() +
                           item["incudedUnit"]));
                 });
               }
@@ -115,7 +119,7 @@ class _ViewIngredientState extends State<ViewIngredient> {
                 setState(() {
                   listViews.add(IngredientRow(
                       title: item["name"],
-                      size: item["includedSize"].toString() +
+                      size: item["includedSize"].toStringAsFixed(2).toString() +
                           item["incudedUnit"]));
                 });
               }

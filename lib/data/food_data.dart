@@ -20,5 +20,5 @@ class FoodData {
       fdcId: json["fdcId"],
       name: json["name"],
       category: json["category"],
-      brandName: json["brandName"]);
+      brandName: json["brandName"] == null ? "N/A" : json["brandName"]);
 }

@@ -59,13 +59,19 @@ class _HomeState extends State<Home> {
     loadData();
   }
 
-  Color generateRandomDarkColor() {
-    Random random = Random();
-    int red = random.nextInt(200); // Keep red component low
-    int green = random.nextInt(200); // Keep green component low
-    int blue = random.nextInt(200); // Keep blue component low
-
-    return Color.fromARGB(255, red, green, blue);
+  generateRandomDarkColor(String NutritionName) {
+    switch (NutritionName) {
+      case "Total lipid (fat)":
+        return Colors.red[300];
+      case "Carbohydrate, by difference":
+        return Colors.yellow[300];
+      case "Cholesterol":
+        return Colors.brown[300];
+      case "Protein":
+        return Colors.green[300];
+      default:
+        return Colors.grey[300];
+    }
   }
 
   var dateDataList = [];
@@ -74,16 +80,16 @@ class _HomeState extends State<Home> {
     DateTime date2 = DateTime.parse(_endDateController1.text);
 
     // Calculate the difference in days
-    int dateDifference = (date2.difference(date1).inDays).abs();
+    int dateDifference = (date2.difference(date1).inDays);
 
     // Check if the difference is 6 days
-
+    print("dateDifference $dateDifference");
     if (dateDifference > 6) {
-      MyToast.showError("Please select a correct date range.");
+      MyToast.showError("Maximum date range should be 7 days");
       return;
     }
     if (dateDifference < 0) {
-      MyToast.showError("Please select a correct date range.");
+      MyToast.showError("Start Date must be less than End Date");
       return;
     }
     print(dateDifference);
@@ -92,8 +98,6 @@ class _HomeState extends State<Home> {
       CircleLoader.showCustomDialog(context);
     });
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    print(prefs.getString("userid"));
-    print(prefs.getString("email"));
     APIManager()
         .getRequest(Constant.domain +
             "/api/Dashboard?userName=${prefs.getString("userid")}&startDate=" +
@@ -108,11 +112,11 @@ class _HomeState extends State<Home> {
       indicatorList = [];
       dataList = [];
       for (var pieChartItem in pieChart) {
-        var color = generateRandomDarkColor();
+        var color = generateRandomDarkColor(pieChartItem["name"].toString());
         setState(() {
           indicatorList.add(Container(
               width: Constant.getWidthPartial(context, 80),
-              height: 20.0,
+              height: 40.0,
               child: Indicator(
                 color: color,
                 text: pieChartItem["name"],
@@ -123,15 +127,17 @@ class _HomeState extends State<Home> {
                     : AppColors.mainTextColor3,
               )));
           dataList.add(PieChartSectionData(
-            color: color,
-            value: double.parse(pieChartItem["amount"].toString()),
-            title: '',
-            radius: 65,
-            titlePositionPercentageOffset: 0.1,
-            borderSide: false
-                ? const BorderSide(color: AppColors.contentColorWhite, width: 6)
-                : BorderSide(color: AppColors.contentColorWhite.withOpacity(0)),
-          ));
+              color: color,
+              value: double.parse(pieChartItem["amount"].toString()),
+              title: '',
+              radius: 85,
+              titlePositionPercentageOffset: 0.98,
+              borderSide: false
+                  ? const BorderSide(
+                      color: AppColors.contentColorWhite, width: 6)
+                  : BorderSide(
+                      color: AppColors.contentColorWhite.withOpacity(0)),
+              badgeWidget: Text((pieChartItem["title"].toString()))));
         });
       }
     });
@@ -165,21 +171,23 @@ class _HomeState extends State<Home> {
     });
   }
 
-  setTitle() {
+  setTitle() async {
     var today = DateTime.now();
     var curHr = today.hour;
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
 
+    var name = prefs.getString("name");
     if (curHr < 12) {
       setState(() {
-        title = 'Good Morning!';
+        title = 'Good Morning $name!';
       });
     } else if (curHr < 18) {
       setState(() {
-        title = 'Good Afternoon!';
+        title = 'Good Afternoon $name!';
       });
     } else {
       setState(() {
-        title = 'Good Evening!';
+        title = 'Good Evening $name!';
       });
     }
   }
@@ -456,7 +464,7 @@ class _HomeState extends State<Home> {
                       ),
                       startDegreeOffset: 180,
                       borderData: FlBorderData(
-                        show: false,
+                        show: true,
                       ),
                       sectionsSpace: 2,
                       centerSpaceRadius: 0,
@@ -466,6 +474,13 @@ class _HomeState extends State<Home> {
                     swapAnimationCurve: Curves.easeInOut,
                   ),
                 ),
+                const SizedBox(
+                  height: 30,
+                ),
+                const Text(
+                  'Overal - Nutrition Consumption',
+                  style: TextStyle(fontSize: 16, color: blue),
+                ),
                 SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Container(
@@ -474,6 +489,13 @@ class _HomeState extends State<Home> {
                         child: BarChartSample2(
                           key: _barChartSample2Key,
                         ))),
+                const SizedBox(
+                  height: 5,
+                ),
+                const Text(
+                  'Daily - Nutrition Consumption',
+                  style: TextStyle(fontSize: 16, color: blue),
+                ),
               ],
             )
           ],
@@ -483,73 +505,73 @@ class _HomeState extends State<Home> {
   }
 }
 
-//DropDown List
-const List<String> list = <String>[
-  '- Select Court -',
-  'Supreme Court',
-  'District Court',
-  'Court of Appeal'
-]; //DropDown Contain List
+// //DropDown List
+// const List<String> list = <String>[
+//   '- Select Court -',
+//   'Supreme Court',
+//   'District Court',
+//   'Court of Appeal'
+// ]; //DropDown Contain List
 
-class DropdownList extends StatefulWidget {
-  //1. required this.onChanged,
-  final Function onChanged;
+// class DropdownList extends StatefulWidget {
+//   //1. required this.onChanged,
+//   final Function onChanged;
 
-  const DropdownList({
-    Key? key,
-    required this.onChanged,
-  }) : super(key: key);
+//   const DropdownList({
+//     Key? key,
+//     required this.onChanged,
+//   }) : super(key: key);
 
-  @override
-  State<DropdownList> createState() => _DropdownButtonExampleState();
-}
+//   @override
+//   State<DropdownList> createState() => _DropdownButtonExampleState();
+// }
 
-//List Creater
-class _DropdownButtonExampleState extends State<DropdownList> {
-  String dropdownValue = list.first;
+// //List Creater
+// class _DropdownButtonExampleState extends State<DropdownList> {
+//   String dropdownValue = list.first;
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(10.0, 0, 10.0, 0),
-      decoration: BoxDecoration(
-        border: Border.all(
-            color: const Color.fromARGB(255, 0, 23, 147), width: 2.0),
-        borderRadius: BorderRadius.circular(5),
-      ),
-      height: 55,
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton<String>(
-          value: dropdownValue,
-          icon: const Icon(
-            Icons.arrow_drop_down,
-            size: 24.0,
-            color: Color.fromARGB(255, 0, 23, 147),
-          ),
-          elevation: 16,
-          style: const TextStyle(
-            fontSize: 14.0,
-            color: Color.fromARGB(255, 0, 23, 147),
-            fontFamily: "Roboto",
-            fontWeight: FontWeight.bold,
-          ),
-          isExpanded: true,
-          onChanged: (String? value) {
-            // This is called when the user selects an item.
-            setState(() {
-              dropdownValue = value!;
-            });
-            // 2. Call, callback passing the selected value
-            widget.onChanged(value);
-          },
-          items: list.map<DropdownMenuItem<String>>((String value) {
-            return DropdownMenuItem<String>(
-              value: value,
-              child: Text(value),
-            );
-          }).toList(),
-        ),
-      ),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       padding: const EdgeInsets.fromLTRB(10.0, 0, 10.0, 0),
+//       decoration: BoxDecoration(
+//         border: Border.all(
+//             color: const Color.fromARGB(255, 0, 23, 147), width: 2.0),
+//         borderRadius: BorderRadius.circular(5),
+//       ),
+//       height: 55,
+//       child: DropdownButtonHideUnderline(
+//         child: DropdownButton<String>(
+//           value: dropdownValue,
+//           icon: const Icon(
+//             Icons.arrow_drop_down,
+//             size: 24.0,
+//             color: Color.fromARGB(255, 0, 23, 147),
+//           ),
+//           elevation: 16,
+//           style: const TextStyle(
+//             fontSize: 14.0,
+//             color: Color.fromARGB(255, 0, 23, 147),
+//             fontFamily: "Roboto",
+//             fontWeight: FontWeight.bold,
+//           ),
+//           isExpanded: true,
+//           onChanged: (String? value) {
+//             // This is called when the user selects an item.
+//             setState(() {
+//               dropdownValue = value!;
+//             });
+//             // 2. Call, callback passing the selected value
+//             widget.onChanged(value);
+//           },
+//           items: list.map<DropdownMenuItem<String>>((String value) {
+//             return DropdownMenuItem<String>(
+//               value: value,
+//               child: Text(value),
+//             );
+//           }).toList(),
+//         ),
+//       ),
+//     );
+//   }
+// }

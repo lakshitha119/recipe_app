@@ -374,6 +374,8 @@ class _BuildMealState extends State<BuildMeal> {
                                                 items: const [
                                                   "G",
                                                   "MG",
+                                                  "L",
+                                                  "ML",
                                                 ],
                                                 selectedValue:
                                                     selectedMeasurement,
@@ -497,7 +499,7 @@ class _BuildMealState extends State<BuildMeal> {
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.transparent, elevation: 0),
                       child: const Text(
-                        'Analyze Meal',
+                        'Build Meal',
                         style: TextStyle(
                           fontFamily: "Roboto",
                           fontSize: 18.0,
