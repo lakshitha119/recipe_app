@@ -36,13 +36,6 @@ class _HomeState extends State<Home> {
   String title = "Good Morning!";
   int touchedIndex = -1;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  var isWebView = false;
-
-  var dcSelected = true;
-  var scSelected = false;
-  var coaSelected = false;
-  late Widget webView;
-  var currentUrl = "google.com";
 
   static const yellow = Color(0xfffeb703);
   static const blue = Color.fromARGB(255, 0, 23, 147);
@@ -55,7 +48,6 @@ class _HomeState extends State<Home> {
     DateTime sixDaysAgo = DateTime.now().subtract(Duration(days: 6));
     _startDateController.text = sixDaysAgo.toString().split(" ")[0];
     setTitle();
-
     loadData();
   }
 
@@ -114,6 +106,7 @@ class _HomeState extends State<Home> {
       for (var pieChartItem in pieChart) {
         var color = generateRandomDarkColor(pieChartItem["name"].toString());
         setState(() {
+          // pie chart indicator set up
           indicatorList.add(Container(
               width: Constant.getWidthPartial(context, 80),
               height: 40.0,
@@ -126,6 +119,7 @@ class _HomeState extends State<Home> {
                     ? AppColors.mainTextColor1
                     : AppColors.mainTextColor3,
               )));
+          // provding data for bar chart
           dataList.add(PieChartSectionData(
               color: color,
               value: double.parse(pieChartItem["amount"].toString()),
@@ -143,6 +137,7 @@ class _HomeState extends State<Home> {
     });
   }
 
+// datapicker
   void _ShowDatePicker(textEditingController) {
     showDatePicker(
         //Color.fromARGB(255, 246, 197, 0)

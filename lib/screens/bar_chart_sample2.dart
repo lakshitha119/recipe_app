@@ -36,6 +36,21 @@ class BarChartSample2State extends State<BarChartSample2> {
     // fetchDataAndBuildChart(sixDaysAgo.toString().split(" ")[0],DateTime.now().toString().split(" ")[0]);
   }
 
+  generateColor(String NutritionName) {
+    switch (NutritionName) {
+      case "Total lipid (fat)":
+        return Colors.red[400];
+      case "Carbohydrate, by difference":
+        return Colors.yellow[400];
+      case "Cholesterol":
+        return Colors.brown[400];
+      case "Protein":
+        return Colors.green[400];
+      default:
+        return Colors.grey[300];
+    }
+  }
+
   var dateDataList = [];
 
   var titles = [];
@@ -59,7 +74,7 @@ class BarChartSample2State extends State<BarChartSample2> {
           print(amo);
           barList.add(BarChartRodData(
             toY: double.parse(nItem["amount"].toString()) / 5,
-            color: widget.leftBarColor,
+            color: generateColor(nItem["name"].toString()),
             width: width,
           ));
         }
