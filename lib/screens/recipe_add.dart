@@ -43,7 +43,7 @@ class _RecipeAddState extends State<RecipeAdd> {
   List<FoodData> allFilterList = [];
   var ingredients = [];
   var _isDisable = false;
-
+  var _isDisableIngredients = false;
   @override
   void initState() {
     super.initState();
@@ -65,20 +65,24 @@ class _RecipeAddState extends State<RecipeAdd> {
 
   Future<List<FoodData>> fetchSuggestions(String query) async {
     allFilterList = [];
-    final value = await APIManager().getRequest(
-        Constant.domain + "/api/v1/Food?name=${query}&pageNo=1&pageSize=10");
-    if (value != null && value['results'] != null) {
-      if (value['results'] != 0) {
-        for (var item in value['results']) {
-          allFilterList.add(FoodData(
-              fdcId: item['fdcId'] as int,
-              name: item['name'] as String,
-              category: item['category'],
-              brandName: item['brandName']));
+    if (query != null && query.length > 3) {
+      final value = await APIManager().getRequest(
+          Constant.domain + "/api/v1/Food?name=${query}&pageNo=1&pageSize=10");
+      if (value != null && value['results'] != null) {
+        if (value['results'] != 0) {
+          for (var item in value['results']) {
+            allFilterList.add(FoodData(
+                fdcId: item['fdcId'] as int,
+                name: item['name'] as String,
+                category: item['category'] as String,
+                brandName: item['brandName'] == null
+                    ? "N/A"
+                    : item['brandName'] as String));
+          }
+          return allFilterList;
+        } else {
+          return allFilterList;
         }
-        return allFilterList;
-      } else {
-        return allFilterList;
       }
     }
     return allFilterList;
@@ -109,6 +113,7 @@ class _RecipeAddState extends State<RecipeAdd> {
   }
 
   addIngObj() {
+    _isDisableIngredients = false;
     _recipeIngCon.text +=
         "${selectedIngName + " " + _ingAmountCon.text}$selectedMeasurement\n";
     // ingredients.
@@ -123,6 +128,9 @@ class _RecipeAddState extends State<RecipeAdd> {
       "addedQty": GetQtyinGorMl(selectedMeasurement, _ingAmountCon.text),
       "unit": GetUnitGorMl(selectedMeasurement)
     });
+    selectedIngName = "";
+    _ingAmountCon.text = "1";
+    selectedMeasurement = "G";
     Navigator.of(context).pop();
   }
 
@@ -310,12 +318,12 @@ class _RecipeAddState extends State<RecipeAdd> {
                                                           ],
                                                         ));
                                                       },
-                                                      onSelected: (city) {
+                                                      onSelected: (value) {
                                                         setState(() {
                                                           selectedIngName =
-                                                              city.name;
+                                                              value.name;
                                                           selectedIngId =
-                                                              city.fdcId;
+                                                              value.fdcId;
                                                         });
                                                       },
                                                     ),
@@ -384,20 +392,30 @@ class _RecipeAddState extends State<RecipeAdd> {
                                                         const EdgeInsets.all(0),
                                                     child: ElevatedButton(
                                                       child: const Text('Add'),
-                                                      onPressed: () {
-                                                        // if (_formKey.currentState!
-                                                        //     .validate()) {
-                                                        //   _formKey.currentState!
-                                                        //       .save();
-                                                        // }
-
-                                                        if (selectedIngName !=
-                                                                "" &&
-                                                            selectedIngId !=
-                                                                0) {
-                                                          addIngObj();
-                                                        } else {}
-                                                      },
+                                                      onPressed:
+                                                          _isDisableIngredients
+                                                              ? null
+                                                              : () {
+                                                                  if (allFilterList
+                                                                      .isEmpty) {
+                                                                    MyToast.showError(
+                                                                        "Please enter ingredient");
+                                                                    return;
+                                                                  }
+                                                                  if (_ingAmountCon
+                                                                          .text ==
+                                                                      "") {
+                                                                    MyToast.showError(
+                                                                        "Please enter ingredient amount");
+                                                                    return;
+                                                                  }
+                                                                  if (selectedIngName !=
+                                                                          "" &&
+                                                                      selectedIngId !=
+                                                                          0) {
+                                                                    addIngObj();
+                                                                  } else {}
+                                                                },
                                                     ),
                                                   )
                                                 ],

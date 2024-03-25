@@ -82,9 +82,9 @@ class _BottomTabBarState extends State<BottomTabBar> {
                   label: 'My Meal',
                   backgroundColor: Color.fromARGB(255, 0, 11, 75)),
               BottomNavigationBarItem(
-                  icon: Icon(Icons.build,
+                  icon: Icon(Icons.search,
                       size: 20, color: Color.fromARGB(255, 255, 255, 255)),
-                  activeIcon: Icon(Icons.build,
+                  activeIcon: Icon(Icons.search,
                       size: 20, color: Color.fromARGB(255, 246, 197, 0)),
                   label: 'Search Query',
                   backgroundColor: Color.fromARGB(255, 0, 11, 75))

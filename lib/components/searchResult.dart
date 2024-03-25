@@ -34,8 +34,8 @@ class SearchResult extends StatelessWidget {
           Padding(
               padding: const EdgeInsets.all(1.0),
               child: Image.asset(
-                "assets/images/3565418.png",
-                scale: 8,
+                "assets/images/6951865.png",
+                scale: 7.5,
               )),
           const SizedBox(
             width: 5,
@@ -49,7 +49,7 @@ class SearchResult extends StatelessWidget {
                   Text("$description",
                       style: const TextStyle(
                           color: blue,
-                          fontSize: 16.0,
+                          fontSize: 14.0,
                           fontWeight: FontWeight.bold)),
                   ListView.builder(
                     padding: EdgeInsets.zero,
@@ -58,13 +58,16 @@ class SearchResult extends StatelessWidget {
                     itemCount: Nutirions.length,
                     itemBuilder: (context, index) {
                       return ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        visualDensity:
+                            VisualDensity(horizontal: 0, vertical: -4),
                         title: Text(
                             Nutirions[index]["nutrientName"] +
                                 " : " +
                                 Nutirions[index]["value"].toString() +
                                 Nutirions[index]["unitName"],
                             style: const TextStyle(
-                                fontSize: 15.0, fontWeight: FontWeight.bold)),
+                                fontSize: 13.0, fontWeight: FontWeight.bold)),
                       );
                     },
                   ),

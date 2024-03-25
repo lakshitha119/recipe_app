@@ -39,6 +39,7 @@ class _BuildMealState extends State<BuildMeal> {
   var mealType = "Breakfast";
   String selectedMeasurement = "G";
   // var isWebView = false;
+  var _isDisableIngredients = false;
 
   var recipeList = [];
 
@@ -323,7 +324,7 @@ class _BuildMealState extends State<BuildMeal> {
                                                           border:
                                                               OutlineInputBorder(),
                                                           labelText:
-                                                              'Search For Ingredient'));
+                                                              'Search For Foods'));
                                                 },
                                                 itemBuilder:
                                                     (context, foodData) {
@@ -347,7 +348,7 @@ class _BuildMealState extends State<BuildMeal> {
                                             Column(
                                               children: [
                                                 const Text(
-                                                  'Amount',
+                                                  'Served Amount',
                                                   style:
                                                       TextStyle(fontSize: 16),
                                                 ),
@@ -385,24 +386,47 @@ class _BuildMealState extends State<BuildMeal> {
                                               padding: const EdgeInsets.all(0),
                                               child: ElevatedButton(
                                                 child: const Text('Add'),
-                                                onPressed: () {
-                                                  recipeList.add({
-                                                    "id": selectedId,
-                                                    "addedQty": _amountCon.text,
-                                                    "addedQtyUnit":
-                                                        selectedMeasurement
-                                                  });
+                                                onPressed: _isDisableIngredients
+                                                    ? null
+                                                    : () {
+                                                        if (selectedName ==
+                                                            "") {
+                                                          MyToast.showError(
+                                                              "Please select a food item");
+                                                          return;
+                                                        }
+                                                        if (_amountCon.text ==
+                                                            "") {
+                                                          MyToast.showError(
+                                                              "Please enter served amount of food");
+                                                          return;
+                                                        }
 
-                                                  Navigator.of(context).pop();
-                                                  selectedName = selectedName +
-                                                      " " +
-                                                      _amountCon.text +
-                                                      selectedMeasurement +
-                                                      " \n";
-                                                  // selectedId = recipe.id;
-                                                  recipeNameCon.text +=
-                                                      selectedName;
-                                                },
+                                                        recipeList.add({
+                                                          "id": selectedId,
+                                                          "addedQty":
+                                                              _amountCon.text,
+                                                          "addedQtyUnit":
+                                                              selectedMeasurement
+                                                        });
+
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                        selectedName =
+                                                            selectedName +
+                                                                " " +
+                                                                _amountCon
+                                                                    .text +
+                                                                selectedMeasurement +
+                                                                " \n";
+                                                        // selectedId = recipe.id;
+                                                        recipeNameCon.text +=
+                                                            selectedName;
+                                                        selectedName = "";
+                                                        _amountCon.text = "1";
+                                                        selectedMeasurement =
+                                                            "G";
+                                                      },
                                               ),
                                             )
                                           ],
@@ -491,7 +515,7 @@ class _BuildMealState extends State<BuildMeal> {
                           ? null
                           : () {
                               if (recipeList.length == 0) {
-                                MyToast.showError("Please add a recipe");
+                                MyToast.showError("Please add a food");
                               } else {
                                 saveMeal();
                               }
