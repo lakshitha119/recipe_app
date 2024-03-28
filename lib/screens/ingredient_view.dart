@@ -67,7 +67,7 @@ class _ViewIngredientState extends State<ViewIngredient> {
                   listViews.add(IngredientRow(
                       title: item["name"],
                       size: item["includedSizeInGrams"]
-                              .toStringAsFixed(2)
+                              .toStringAsFixed(3)
                               .toString() +
                           item["incudedUnit"]));
                 });
@@ -94,7 +94,7 @@ class _ViewIngredientState extends State<ViewIngredient> {
                   listViews.add(IngredientRow(
                       title: item["name"],
                       size: item["includedSizeInGrams"]
-                              .toStringAsFixed(2)
+                              .toStringAsFixed(3)
                               .toString() +
                           item["incudedUnit"]));
                 });

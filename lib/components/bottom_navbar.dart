@@ -60,13 +60,6 @@ class _BottomTabBarState extends State<BottomTabBar> {
                       size: 20, color: Color.fromARGB(255, 246, 197, 0)),
                   label: 'Home',
                   backgroundColor: Color.fromARGB(255, 0, 11, 75)),
-              // BottomNavigationBarItem(
-              //     icon: Icon(Icons.newspaper_rounded,
-              //         size: 20, color: Color.fromARGB(255, 255, 255, 255)),
-              //     activeIcon: Icon(Icons.newspaper_rounded,
-              //         size: 20, color: Color.fromARGB(255, 246, 197, 0)),
-              //     label: 'Add Recipe',
-              //     backgroundColor: Color.fromARGB(255, 0, 11, 75)),
               BottomNavigationBarItem(
                   icon: Icon(Icons.food_bank,
                       size: 20, color: Color.fromARGB(255, 255, 255, 255)),
