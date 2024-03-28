@@ -493,7 +493,7 @@ class _RecipeAddState extends State<RecipeAdd> {
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.transparent, elevation: 0),
                       child: const Text(
-                        'Analyze Recipe',
+                        'Add Recipe',
                         style: TextStyle(
                           fontFamily: "Roboto",
                           fontSize: 18.0,

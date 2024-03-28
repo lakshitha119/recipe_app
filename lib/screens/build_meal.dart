@@ -105,6 +105,30 @@ class _BuildMealState extends State<BuildMeal> {
     }
   }
 
+  GetUnitGorMl(String unit) {
+    switch (unit) {
+      case "G" || "KG":
+        return "G";
+      case "ML" || "L" || "Cup" || "tbl spoon" || "t spoon":
+        return "ML";
+    }
+  }
+
+  GetQtyinGorMl(String unit, String amount) {
+    switch (unit) {
+      case "G" || "ML":
+        return int.tryParse(amount);
+      case "KG" || "L":
+        return ((double.tryParse(amount) ?? 0) * 1000);
+      case "Cup":
+        return ((double.tryParse(amount) ?? 0) * 236.6);
+      case "tbl spoon":
+        return ((double.tryParse(amount) ?? 0) * 14.8);
+      case "t spoon":
+        return ((double.tryParse(amount) ?? 0) * 5);
+    }
+  }
+
   saveMeal() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -355,6 +379,9 @@ class _BuildMealState extends State<BuildMeal> {
                                                 TextField(
                                                   controller: _amountCon,
                                                   // Set maxLines to null for multiline input
+                                                  keyboardType: TextInputType
+                                                      .numberWithOptions(
+                                                          decimal: true),
                                                   decoration:
                                                       const InputDecoration(
                                                     border:
@@ -404,10 +431,12 @@ class _BuildMealState extends State<BuildMeal> {
 
                                                         recipeList.add({
                                                           "id": selectedId,
-                                                          "addedQty":
-                                                              _amountCon.text,
+                                                          "addedQty": GetQtyinGorMl(
+                                                              selectedMeasurement,
+                                                              _amountCon.text),
                                                           "addedQtyUnit":
-                                                              selectedMeasurement
+                                                              GetUnitGorMl(
+                                                                  selectedMeasurement)
                                                         });
 
                                                         Navigator.of(context)

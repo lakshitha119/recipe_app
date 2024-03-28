@@ -133,17 +133,28 @@ class _SearchQueryState extends State<SearchQuery> {
         ),
         backgroundColor: const Color.fromARGB(255, 0, 23, 147),
       ),
-      body: ListView.builder(
-        shrinkWrap: true, // -> Add this here
-        scrollDirection: Axis.vertical,
-        itemCount: allFilterList.length,
-        itemBuilder: (context, index) {
-          return ListTile(
-            title: SearchResult(
-                description: allFilterList[index]["description"],
-                Nutirions: allFilterList[index]["foodNutrients"]),
-          );
-        },
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            Text(
+              "USDA calculates below values per 100ml 0r 100g",
+              style: TextStyle(fontStyle: FontStyle.italic),
+            ),
+            ListView.builder(
+              shrinkWrap: true, // -> Add this here
+              scrollDirection: Axis.vertical,
+              itemCount: allFilterList.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: SearchResult(
+                      description: allFilterList[index]["description"],
+                      Nutirions: allFilterList[index]["foodNutrients"]),
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
