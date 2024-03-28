@@ -32,12 +32,14 @@ class _NutritionViewState extends State<NutritionView> {
   String SelectedValueHolder = ""; //Dropdown Button Selected Value Holder
 
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-
   late Timer t;
-
+  var totalserved;
+  var totalServedUnit;
   @override
   void initState() {
     super.initState();
+    totalserved = 0;
+    totalServedUnit = "g";
 
     loadNutritionData();
   }
@@ -59,6 +61,15 @@ class _NutritionViewState extends State<NutritionView> {
 
         var totalNuritionList = res["results"]["totalNuritions"];
 
+        var recipesList = res["results"]["recipes"];
+        if (recipesList != null) {
+          if (recipesList.length != 0) {
+            for (var recipe in recipesList) {
+              totalserved = (recipe["servedWeight"] + totalserved);
+              totalServedUnit = recipe["servedWeightUnit"];
+            }
+          }
+        }
         if (totalNuritionList != null) {
           if (totalNuritionList.length != 0) {
             for (var item in totalNuritionList) {
@@ -83,7 +94,8 @@ class _NutritionViewState extends State<NutritionView> {
         CircleLoader.hideLoader(context);
 
         var ingredientList = res["results"]["ingredients"];
-
+        totalserved = res["results"]["servedWeight"];
+        totalServedUnit = res["results"]["servedWeightUnit"];
         if (ingredientList != null) {
           print("ingredientList");
           print(ingredientList);
@@ -122,7 +134,8 @@ class _NutritionViewState extends State<NutritionView> {
         CircleLoader.hideLoader(context);
 
         var ingredientList = res["results"]["ingredients"];
-
+        totalserved = res["results"]["totalWeight"];
+        totalServedUnit = res["results"]["totalWeightUnit"];
         if (ingredientList != null) {
           print("ingredientList");
           print(ingredientList);
@@ -206,16 +219,13 @@ class _NutritionViewState extends State<NutritionView> {
                   Text("Nutrition Facts",
                       style: TextStyle(
                           fontSize: 25.0, fontWeight: FontWeight.bold)),
-                  Text("serving size" "total weight",
+                  Text("serving size  :" + "$totalserved" + "$totalServedUnit",
                       style: TextStyle(
                           fontSize: 16.0, fontWeight: FontWeight.bold)),
                   Divider(
                     color: Colors.black,
                     thickness: 10.0,
                   ),
-                  Text("amount per serving",
-                      style: TextStyle(
-                          fontSize: 16.0, fontWeight: FontWeight.bold)),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
