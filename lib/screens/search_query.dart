@@ -133,8 +133,7 @@ class _SearchQueryState extends State<SearchQuery> {
         ),
         backgroundColor: const Color.fromARGB(255, 0, 23, 147),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
+      body: SingleChildScrollView(
         child: Column(
           children: [
             Text(

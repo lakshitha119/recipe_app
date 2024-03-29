@@ -100,11 +100,16 @@ class _MyMealState extends State<MyMeal> {
         itemBuilder: (context, index) {
           return Dismissible(
             key: Key(allFilterList[index]["id"]),
-            background: Container(child: Icon(Icons.delete), color: Colors.red),
+            background: Container(
+              child: Icon(Icons.delete),
+              color: Colors.red,
+              alignment: Alignment.centerLeft,
+            ),
             onDismissed: (direction) {
               allFilterList.removeAt(index);
               deleteData(allFilterList[index]["id"]);
             },
+            direction: DismissDirection.endToStart,
             child: ListTile(
                 title: MealCard(
               id: allFilterList[index]["id"],
